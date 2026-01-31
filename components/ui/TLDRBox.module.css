@@ -1,0 +1,42 @@
+.box {
+    background: rgba(230, 126, 34, 0.08);
+    /* Terracotta tint */
+    border: 1px solid rgba(230, 126, 34, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    backdrop-filter: blur(8px);
+}
+
+.title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+}
+
+.item {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+    color: var(--foreground);
+    opacity: 0.9;
+}
+
+.item::before {
+    content: "•";
+    color: var(--primary);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}

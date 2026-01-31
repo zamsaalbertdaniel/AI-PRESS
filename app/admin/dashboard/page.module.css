@@ -1,0 +1,131 @@
+.dashboardContainer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 24px;
+}
+
+.title {
+    font-size: 38px;
+    font-family: 'Fraunces', serif;
+    background: linear-gradient(135deg, #fff, var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
+
+.subtitle {
+    font-size: 14px;
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.scrapeBtn {
+    background: linear-gradient(135deg, var(--gold), #e67e22);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 30px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(241, 196, 15, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scrapeBtn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(211, 84, 0, 0.3);
+}
+
+.mainGrid {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    gap: 48px;
+}
+
+.pipelineSection {
+    background: white;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow-warm);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--clay);
+    padding-bottom: 16px;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.statCard {
+    background: #F9F8F6;
+    border: 1px solid var(--glass-border);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm);
+}
+
+.miniCard {
+    background: white;
+    border: 1px solid var(--glass-border);
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.logBox {
+    background: var(--deep-espresso);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: var(--radius);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    height: 180px;
+    overflow-y: auto;
+    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.logLine {
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 6px;
+}
+
+.busy {
+    animation: neonPulse 1.5s infinite;
+}
+
+@keyframes neonPulse {
+    0% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.5);
+        box-shadow: 0 0 20px var(--gold);
+    }
+
+    100% {
+        filter: brightness(1);
+    }
+}

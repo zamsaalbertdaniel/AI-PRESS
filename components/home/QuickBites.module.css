@@ -1,0 +1,42 @@
+.wrapper {
+    margin-bottom: 60px;
+}
+
+.label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 800;
+    color: var(--accent-orange);
+    margin-bottom: 24px;
+}
+
+.scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.time {
+    font-size: 10px;
+    color: var(--accent-gold);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-main);
+    font-weight: 500;
+}

@@ -1,0 +1,12 @@
+.progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: var(--primary);
+    /* Terracotta */
+    z-index: 1001;
+    /* Above Header */
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px var(--primary);
+}

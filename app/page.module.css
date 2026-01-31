@@ -1,0 +1,203 @@
+.main {
+  min-height: 100vh;
+  padding-bottom: 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cosmic Decorations */
+.nebula1 {
+  position: absolute;
+  top: 10%;
+  left: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 209, 255, 0.05) 0%, transparent 70%);
+  z-index: -1;
+  filter: blur(80px);
+}
+
+.nebula2 {
+  position: absolute;
+  bottom: 20%;
+  right: -10%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255, 140, 0, 0.03) 0%, transparent 70%);
+  z-index: -1;
+  filter: blur(100px);
+}
+
+/* 1. Neural Ticker */
+.neuralTicker {
+  background: rgba(8, 7, 7, 0.95);
+  color: var(--cyber-blue);
+  padding: 12px 0;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0, 209, 255, 0.1);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.tickerFlex {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.tickerBadge {
+  background: var(--neon-orange);
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--neon-orange);
+}
+
+.tickerText {
+  display: inline-block;
+  font-size: 11px;
+  font-family: monospace;
+  letter-spacing: 2px;
+  animation: scrollTicker 40s linear infinite;
+  text-transform: uppercase;
+}
+
+@keyframes scrollTicker {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* 2. Hero */
+.hero {
+  padding: 120px 0 80px;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 96px;
+  font-weight: 900;
+  letter-spacing: -4px;
+  margin-bottom: 16px;
+  color: white;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+.dot {
+  color: var(--neon-orange);
+  text-shadow: 0 0 20px var(--neon-orange);
+}
+
+.heroSubtitle {
+  font-size: 20px;
+  color: var(--text-muted);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* 3. Dashboard Sections */
+.sectionTitle {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 900;
+  color: var(--cyber-blue);
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sectionTitle::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(to right, rgba(0, 209, 255, 0.2), transparent);
+}
+
+/* 4. Upper Dashboard */
+.upperDashboard {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 40px;
+  margin-bottom: 100px;
+}
+
+.trendingGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.trendingCard {
+  background: rgba(15, 17, 21, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cardBadge {
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--neon-gold);
+  margin-bottom: 16px;
+  text-shadow: 0 0 10px var(--neon-gold);
+}
+
+.cardTitle {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: white;
+}
+
+/* 5. Data Section */
+.dataGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 48px;
+}
+
+.explainerCard {
+  background: linear-gradient(135deg, rgba(8, 7, 7, 0.9), rgba(26, 11, 46, 0.8));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  padding: 60px 40px;
+}
+
+.explainerTitle {
+  font-size: 32px;
+  color: var(--neon-gold);
+  margin-bottom: 24px;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.explainerBtn {
+  background: var(--neon-orange);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 4px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+  transition: all 0.3s;
+}
+
+.explainerBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 35px rgba(255, 140, 0, 0.5);
+}
+
+@media (max-width: 1024px) {
+  .heroTitle {
+    font-size: 64px;
+  }
+
+  .upperDashboard,
+  .dataGrid {
+    grid-template-columns: 1fr;
+  }
+}

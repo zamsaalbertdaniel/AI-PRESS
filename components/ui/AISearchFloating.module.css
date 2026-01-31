@@ -1,0 +1,104 @@
+.floatBtn {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    box-shadow: 0 10px 30px rgba(230, 126, 34, 0.4);
+    cursor: pointer;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floatBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 40px rgba(230, 126, 34, 0.6);
+}
+
+.hideBtn {
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.chatWindow {
+    position: fixed;
+    bottom: 100px;
+    right: 32px;
+    width: 350px;
+    height: 500px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.chatHeader {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--foreground);
+}
+
+.chatBody {
+    flex: 1;
+    padding: 16px;
+    color: var(--foreground);
+}
+
+.welcomeMsg {
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+.chatInputArea {
+    padding: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--foreground);
+    outline: none;
+}
+
+.input:focus {
+    border-color: var(--primary);
+}

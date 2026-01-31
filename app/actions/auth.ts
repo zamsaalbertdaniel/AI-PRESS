@@ -1,0 +1,25 @@
+"use server";
+
+import { cookies } from 'next/headers';
+
+export async function loginAdminAction(password: string) {
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin2026'; // Fallback for safety during setup
+
+    if (password === adminPassword) {
+        const cookieStore = await cookies();
+        cookieStore.set('aipress_auth', 'true', {
+            path: '/',
+            maxAge: 86400,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+        });
+        return { success: true };
+    }
+
+    return { success: false, error: 'Invalid password' };
+}
+
+export async function logoutAdminAction() {
+    const cookieStore = await cookies();
+    cookieStore.delete('aipress_auth');
+}

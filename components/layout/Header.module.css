@@ -1,0 +1,136 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(8, 7, 7, 0.7);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+}
+
+.topBar {
+    background: var(--obsidian);
+    color: var(--text-main);
+    padding: 10px 0;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(0, 209, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.topContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticker {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+.liveDot {
+    color: var(--cyber-blue);
+    font-weight: 900;
+    filter: drop-shadow(0 0 5px var(--cyber-blue));
+}
+
+.socialIcon {
+    background: rgba(255, 255, 255, 0.05);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: var(--text-main);
+    transition: all 0.3s;
+    border: 1px solid rgba(0, 209, 255, 0.2);
+}
+
+.socialIcon:hover {
+    background: var(--cyber-blue);
+    color: black;
+    box-shadow: 0 0 15px var(--cyber-blue);
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+}
+
+.logo {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.highlight {
+    color: var(--neon-gold);
+    text-shadow: 0 0 15px var(--neon-gold);
+}
+
+.rightGroup {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.nav {
+    display: flex;
+    gap: 24px;
+}
+
+.link {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.link:hover {
+    color: var(--cyber-blue);
+    text-shadow: 0 0 10px var(--cyber-blue);
+}
+
+.langToggle {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--neon-gold);
+    transition: all 0.3s;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+}
+
+.langToggle:hover {
+    background: var(--neon-gold);
+    color: black;
+    box-shadow: 0 0 20px var(--neon-gold);
+}
+
+.active {
+    color: inherit;
+}
+
+.inactive {
+    opacity: 0.4;
+}
+
+.divider {
+    opacity: 0.2;
+    margin: 0 4px;
+}
