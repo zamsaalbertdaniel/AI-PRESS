@@ -71,6 +71,16 @@ body {
   }
 }
 
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

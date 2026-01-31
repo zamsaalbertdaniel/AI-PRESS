@@ -12,12 +12,12 @@
 }
 
 .topBar {
-    background: var(--obsidian);
+    background: rgba(0, 0, 0, 0.4);
     color: var(--text-main);
-    padding: 10px 0;
+    padding: 8px 0;
     font-size: 11px;
-    border-bottom: 1px solid rgba(0, 209, 255, 0.2);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border-bottom: 1px solid rgba(0, 209, 255, 0.1);
+    backdrop-filter: blur(5px);
 }
 
 .topContainer {
@@ -29,9 +29,25 @@
 .ticker {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 24px;
     font-family: monospace;
     letter-spacing: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.tickerWrapper {
+    display: flex;
+    gap: 40px;
+    animation: marquee 30s linear infinite;
+}
+
+.tickerText {
+    color: var(--text-muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 500;
 }
 
 .liveDot {

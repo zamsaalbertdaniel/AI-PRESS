@@ -14,9 +14,12 @@ export default function Header() {
                 <div className={`container-custom ${styles.topContainer}`}>
                     <div className={styles.ticker}>
                         <span className={styles.liveDot}>● LIVE CYBER STREAM</span>
-                        <span className={styles.tickerText}>
-                            Gemini 2.0 Researching: Quantum Computing at 300K... SpaceX Satellite Megaconstellation online... AIPress AI Core: Fully Operational...
-                        </span>
+                        <div className={styles.tickerWrapper}>
+                            <span className={styles.tickerText}>
+                                Gemini 2.0 Researching: Quantum Computing at 300K... SpaceX Satellite Megaconstellation online... AIPress AI Core: Fully Operational... &nbsp; • &nbsp;
+                                Gemini 2.0 Researching: Quantum Computing at 300K... SpaceX Satellite Megaconstellation online... AIPress AI Core: Fully Operational...
+                            </span>
+                        </div>
                     </div>
                     <div className={styles.socials}>
                         <a href="#" className={styles.socialIcon} aria-label="Facebook">
