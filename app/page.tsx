@@ -17,17 +17,6 @@ export default function Home() {
       <div className={styles.nebula1}></div>
       <div className={styles.nebula2}></div>
 
-      {/* 1. Neural News Ticker (Extreme top) */}
-      <div className={styles.neuralTicker}>
-        <div className="container-custom">
-          <div className={styles.tickerFlex}>
-            <span className={styles.tickerBadge}>LIVE NEURAL FEED</span>
-            <p className={styles.tickerText}>
-              AGI Breakthrough announced by DeepMind • NVIDIA releases Blackwell chips with 20 Petaflops • Midjourney v7 alpha testing begins for Pro users • OpenAI GPT-5 training cluster operational in Iowa
-            </p>
-          </div>
-        </div>
-      </div>
 
       <div className="container-custom">
         {/* 2. Hero Header */}

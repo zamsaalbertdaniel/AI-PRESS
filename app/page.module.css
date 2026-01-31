@@ -28,50 +28,6 @@
   filter: blur(100px);
 }
 
-/* 1. Neural Ticker */
-.neuralTicker {
-  background: rgba(8, 7, 7, 0.95);
-  color: var(--cyber-blue);
-  padding: 12px 0;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(0, 209, 255, 0.1);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-}
-
-.tickerFlex {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.tickerBadge {
-  background: var(--neon-orange);
-  color: white;
-  font-size: 10px;
-  font-weight: 900;
-  padding: 2px 8px;
-  border-radius: 4px;
-  box-shadow: 0 0 10px var(--neon-orange);
-}
-
-.tickerText {
-  display: inline-block;
-  font-size: 11px;
-  font-family: monospace;
-  letter-spacing: 2px;
-  animation: scrollTicker 40s linear infinite;
-  text-transform: uppercase;
-}
-
-@keyframes scrollTicker {
-  0% {
-    transform: translateX(100%);
-  }
-
-  100% {
-    transform: translateX(-100%);
-  }
-}
 
 /* 2. Hero */
 .hero {
@@ -80,12 +36,12 @@
 }
 
 .heroTitle {
-  font-size: 96px;
-  font-weight: 900;
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 950;
   letter-spacing: -4px;
   margin-bottom: 16px;
   color: white;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.1), 0 0 60px rgba(0, 209, 255, 0.1);
 }
 
 .dot {
