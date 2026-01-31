@@ -1,4 +1,4 @@
-import { searchAndResearchNews, generateEditorialTake } from "../lib/ai.ts";
+import { searchAndResearchNews, generateEditorialTake } from "../lib/ai";
 import * as dotenv from "dotenv";
 
 // Manually load .env.local for script
