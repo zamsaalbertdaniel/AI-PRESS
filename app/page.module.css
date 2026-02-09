@@ -57,6 +57,48 @@
   line-height: 1.6;
 }
 
+.heroActions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.heroPrimary,
+.heroSecondary {
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.heroPrimary {
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.9), rgba(255, 80, 0, 0.9));
+  color: white;
+  box-shadow: 0 20px 40px rgba(255, 120, 40, 0.3);
+}
+
+.heroPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px rgba(255, 120, 40, 0.45);
+}
+
+.heroSecondary {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  background: rgba(12, 15, 19, 0.7);
+}
+
+.heroSecondary:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 209, 255, 0.6);
+  box-shadow: 0 15px 30px rgba(0, 209, 255, 0.2);
+}
+
 /* 3. Dashboard Sections */
 .sectionTitle {
   font-size: 11px;
@@ -94,6 +136,10 @@
 .trendingCard {
   background: rgba(15, 17, 21, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .cardBadge {
@@ -108,6 +154,45 @@
   font-size: 24px;
   margin-bottom: 16px;
   color: white;
+}
+
+.trendingMedia {
+  position: relative;
+  padding: 24px;
+  min-height: 150px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.mediaAurora {
+  background: radial-gradient(circle at top, rgba(0, 209, 255, 0.4), rgba(11, 13, 17, 0.2)), linear-gradient(135deg, rgba(15, 40, 60, 0.9), rgba(10, 10, 20, 0.9));
+}
+
+.mediaCircuit {
+  background: radial-gradient(circle at top, rgba(255, 140, 0, 0.3), rgba(8, 8, 12, 0.2)), linear-gradient(135deg, rgba(36, 24, 52, 0.9), rgba(6, 6, 14, 0.9));
+}
+
+.mediaOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.55));
+}
+
+.trendingBody {
+  padding: 24px;
+}
+
+.cardExcerpt {
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.cardMeta {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 /* 5. Data Section */
@@ -145,6 +230,50 @@
 .explainerBtn:hover {
   transform: scale(1.05);
   box-shadow: 0 0 35px rgba(255, 140, 0, 0.5);
+}
+
+.socialStrip {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.socialLabel {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.socialIcons {
+  display: flex;
+  gap: 12px;
+}
+
+.socialIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.socialIcon svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  color: white;
+}
+
+.socialIcon:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 209, 255, 0.6);
+  box-shadow: 0 10px 20px rgba(0, 209, 255, 0.3);
 }
 
 @media (max-width: 1024px) {
