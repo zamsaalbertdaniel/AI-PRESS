@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 interface AdminContextType {
     isAuthenticated: boolean;
-    login: (password: string) => Promise<boolean>;
+    login: (password: string) => Promise<{ success: boolean; error?: string }>;
     logout: () => Promise<void>;
 }
 
@@ -30,9 +30,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         if (result.success) {
             setIsAuthenticated(true);
             localStorage.setItem("aipress_admin_auth", "true");
-            return true;
         }
-        return false;
+        return result;
     };
 
     const logout = async () => {

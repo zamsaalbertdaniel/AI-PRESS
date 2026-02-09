@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { fetchArticles } from '@/app/actions/articles';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://aipress.ro'; // Placeholder for your future domain
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aipress.ro';
 
     // 1. Fetch all articles to include in sitemap
     const articles = await fetchArticles();
