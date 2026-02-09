@@ -15,12 +15,13 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const router = useRouter();
 
-    // Mock persistence
     useEffect(() => {
-        const stored = document.cookie.split('; ').find(row => row.startsWith('aipress_auth='));
-        if (stored?.split('=')[1] === 'true') {
-            setIsAuthenticated(true);
-        }
+        const checkSession = async () => {
+            const { getAdminSession } = await import("@/app/actions/auth");
+            const result = await getAdminSession();
+            setIsAuthenticated(result.authenticated);
+        };
+        checkSession();
     }, []);
 
     const login = async (password: string) => {
@@ -29,7 +30,6 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (result.success) {
             setIsAuthenticated(true);
-            localStorage.setItem("aipress_admin_auth", "true");
         }
         return result;
     };
@@ -38,7 +38,6 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         const { logoutAdminAction } = await import("@/app/actions/auth");
         await logoutAdminAction();
         setIsAuthenticated(false);
-        localStorage.removeItem("aipress_admin_auth");
         router.push("/admin/login");
     };
 

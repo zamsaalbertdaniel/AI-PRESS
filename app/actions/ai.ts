@@ -3,12 +3,14 @@
 import { Article } from "@/types";
 import { translateToRomanian, generateEditorialTake, generateImagePrompt } from "@/lib/ai";
 import { saveArticleAction } from "./articles";
+import { requireAdmin } from "@/lib/auth";
 
 /**
  * Automates the enrichment of an article using AI
  */
 export async function processArticleWithAI(article: Article) {
     try {
+        await requireAdmin();
         const sourceContent = article.contentEn;
 
         // 1. Run AI tasks in parallel for speed
@@ -43,6 +45,7 @@ export async function processArticleWithAI(article: Article) {
  * Advanced: Simulates a "Neuromorphic Scraper" that finds new content
  */
 export async function runNeuralScraperAction() {
+    await requireAdmin();
     // In a real app, this would fetch from RSS or another API
     // For this demo, we'll create a new trending draft
     const newArticle: Article = {
