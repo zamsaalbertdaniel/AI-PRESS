@@ -1,7 +1,7 @@
 import React from 'react';
 import TLDRBox from '@/components/ui/TLDRBox';
 import styles from './page.module.css';
-import { fetchArticleById, fetchArticles } from '@/app/actions/articles';
+import { fetchArticleById, fetchPublishedArticles } from '@/app/actions/articles';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 
@@ -32,9 +32,9 @@ export async function generateMetadata(props: { params: Params }): Promise<Metad
     };
 }
 
-// 2. Pre-render existing articles (Performance)
+// 2. Pre-render existing published articles (Performance)
 export async function generateStaticParams() {
-    const articles = await fetchArticles();
+    const articles = await fetchPublishedArticles();
     return articles.map((article) => ({
         id: article.id,
     }));
@@ -47,7 +47,7 @@ export default async function ArticlePage(props: { params: Params }) {
     const params = await props.params;
     const article = await fetchArticleById(params.id);
 
-    if (!article) {
+    if (!article || article.status !== 'published') {
         notFound();
     }
 

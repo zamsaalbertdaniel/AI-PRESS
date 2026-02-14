@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styles from './page.module.css';
 import dynamic from 'next/dynamic';
 import QuickBites from '@/components/home/QuickBites';
@@ -6,56 +7,66 @@ import CryptoHub from '@/components/home/CryptoHub';
 import GlassCard from '@/components/ui/GlassCard';
 import HomeHero from '@/components/home/HomeHero';
 import HomePipeline from '@/components/home/HomePipeline';
+import { fetchPublishedArticles } from '@/app/actions/articles';
+import { Article } from '@/types';
 
 const AISearchFloating = dynamic(() => import('@/components/ui/AISearchFloating'));
 
-const TRENDING_ITEMS = [
-  {
-    id: 1,
-    badge: "#1 RANKED",
-    title: "AGI in 2026: The Dawn of Reasoning",
-    excerpt: "DeepMind's new logic engine bridges the gap between neural intuition and symbolic truth.",
-    meta: "Research • 6 min read",
-  },
-  {
-    id: 2,
-    badge: "CORE TECH",
-    title: "NVIDIA Blackwell Architecture",
-    excerpt: "A new paradigm for large-scale model training with sub-20ms latency.",
-    meta: "Infrastructure • 4 min read",
-  },
-];
+export default async function Home() {
+  const articles = await fetchPublishedArticles();
 
-export default function Home() {
+  // Get top 2 trending articles
+  const trendingItems = articles
+    .filter(a => a.trendingRank != null)
+    .sort((a, b) => (a.trendingRank || 99) - (b.trendingRank || 99))
+    .slice(0, 2)
+    .map((a: Article) => ({
+      id: a.id,
+      badge: `#${a.trendingRank} TRENDING`,
+      title: a.titleEn,
+      excerpt: a.summaryEn,
+      meta: `${a.category} • ${a.readTime}`
+    }));
+
+  // Fallback if no trending items
+  const finalTrending = trendingItems.length > 0 ? trendingItems : [
+    {
+      id: "demo1",
+      badge: "HOT TOPIC",
+      title: "The Future is Neural",
+      excerpt: "AIPress is fetching the latest trending AI insights...",
+      meta: "Analysis • 5 min read"
+    }
+  ];
+
   return (
     <main className={styles.main}>
       <div className={styles.nebula1}></div>
       <div className={styles.nebula2}></div>
 
-
       <div className="container-custom">
-        {/* 2. Hero Header */}
         <HomeHero />
 
-        {/* 3. Trending & Quick Bites (Dashboard Style) */}
         <section className={styles.upperDashboard}>
           <div className={styles.trendingCase}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Trending Now</h2>
             </div>
             <div className={styles.trendingGrid}>
-              {TRENDING_ITEMS.map((item, index) => (
-                <GlassCard key={item.id} className={styles.trendingCard} hoverEffect={true}>
-                  <div className={`${styles.trendingMedia} ${index === 0 ? styles.mediaAurora : styles.mediaCircuit}`}>
-                    <div className={styles.mediaOverlay}></div>
-                    <span className={styles.cardBadge}>{item.badge}</span>
-                  </div>
-                  <div className={styles.trendingBody}>
-                    <h3 className={styles.cardTitle}>{item.title}</h3>
-                    <p className={styles.cardExcerpt}>{item.excerpt}</p>
-                    <div className={styles.cardMeta}>{item.meta}</div>
-                  </div>
-                </GlassCard>
+              {finalTrending.map((item, index) => (
+                <Link href={item.id.startsWith('demo') ? '#' : `/articles/${item.id}`} key={item.id} style={{ textDecoration: 'none' }}>
+                  <GlassCard className={styles.trendingCard} hoverEffect={true}>
+                    <div className={`${styles.trendingMedia} ${index === 0 ? styles.mediaAurora : styles.mediaCircuit}`}>
+                      <div className={styles.mediaOverlay}></div>
+                      <span className={styles.cardBadge}>{item.badge}</span>
+                    </div>
+                    <div className={styles.trendingBody}>
+                      <h3 className={styles.cardTitle}>{item.title}</h3>
+                      <p className={styles.cardExcerpt}>{item.excerpt}</p>
+                      <div className={styles.cardMeta}>{item.meta}</div>
+                    </div>
+                  </GlassCard>
+                </Link>
               ))}
             </div>
           </div>
@@ -65,21 +76,21 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4. Main News Grid (Bento) */}
         <HomePipeline />
 
-        {/* 5. Data & Economy (Crypto Hub) */}
         <section className={styles.dataSection}>
           <div className={styles.dataGrid}>
             <div className={styles.marketColumn}>
               <CryptoHub />
             </div>
             <div className={styles.explainerColumn}>
-              <GlassCard className={styles.explainerCard}>
-                <h3 className={styles.explainerTitle}>AI Explained: The Prompt</h3>
-                <p className={styles.explainerText}>The bridge between human intent and machine execution. Discover how latent space mapping works.</p>
-                <button className={styles.explainerBtn}>Neural Guide →</button>
-              </GlassCard>
+              <div id="ai-explained-root">
+                <GlassCard className={styles.explainerCard}>
+                  <h3 className={styles.explainerTitle}>AI Focus: Transformer</h3>
+                  <p className={styles.explainerText}>The neural architecture that birthed GPT. Understanding self-attention mechanisms.</p>
+                  <button className={styles.explainerBtn}>Read Guide →</button>
+                </GlassCard>
+              </div>
               <div className={styles.socialStrip}>
                 <span className={styles.socialLabel}>JOIN THE FEED:</span>
                 <div className={styles.socialIcons}>

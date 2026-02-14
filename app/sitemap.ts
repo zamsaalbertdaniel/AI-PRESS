@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next';
-import { fetchArticles } from '@/app/actions/articles';
+import { fetchPublishedArticles } from '@/app/actions/articles';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aipress.business';
 
-    // 1. Fetch all articles to include in sitemap
-    const articles = await fetchArticles();
+    // 1. Fetch ONLY published articles to include in sitemap
+    const articles = await fetchPublishedArticles();
 
     const articleEntries: MetadataRoute.Sitemap = articles.map((article) => ({
         url: `${baseUrl}/articles/${article.id}`,

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { fetchArticles } from '@/app/actions/articles';
+import { fetchPublishedArticles } from '@/app/actions/articles';
 import { Article } from '@/types';
 import styles from './BentoGrid.module.css';
 
@@ -11,14 +11,22 @@ export default function BentoGrid({ language = 'en' }: { language?: string }) {
 
     useEffect(() => {
         const load = async () => {
-            const data = await fetchArticles();
+            const data = await fetchPublishedArticles();
             setArticles(data);
             setLoading(false);
         };
         load();
     }, []);
 
-    if (loading) return <div className={styles.grid}>Loading Neural Pipeline...</div>;
+    if (loading) {
+        return (
+            <div className={styles.grid}>
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className={`${styles.item} ${styles.skeleton}`} />
+                ))}
+            </div>
+        );
+    }
 
     return (
         <div className={styles.grid}>

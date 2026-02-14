@@ -2,9 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { Article } from "@/types";
-import { getArticles, getArticleById, updateArticle, deleteArticle } from "@/lib/db";
+import { getArticles, getPublishedArticles, getArticleById, updateArticle, deleteArticle } from "@/lib/db";
 import { articleSchema, idSchema } from "@/lib/validators";
 import { requireAdmin } from "@/lib/auth";
+
+export async function fetchPublishedArticles() {
+    return await getPublishedArticles();
+}
 
 export async function fetchArticles() {
     return await getArticles();
