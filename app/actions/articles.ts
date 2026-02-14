@@ -18,7 +18,9 @@ export async function saveArticleAction(article: Article) {
     await requireAdmin();
     const parsed = articleSchema.safeParse(article);
     if (!parsed.success) {
-        return { success: false, error: "Invalid article payload." };
+        const errorMsg = parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        console.error("Validation failed:", errorMsg);
+        return { success: false, error: `Validation failed: ${errorMsg}` };
     }
     await updateArticle(article);
     revalidatePath("/");
