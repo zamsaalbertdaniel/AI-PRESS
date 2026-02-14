@@ -34,7 +34,7 @@ export default function Footer() {
                     <div>
                         <h4 className={styles.columnTitle}>Company</h4>
                         <div className={styles.columnLinks}>
-                            <Link href="#about">About Us</Link>
+                            <Link href="/about">About Us</Link>
                             <Link href="mailto:contact@aipress.business">Contact</Link>
                         </div>
                     </div>
