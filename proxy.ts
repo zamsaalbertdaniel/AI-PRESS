@@ -1,26 +1,45 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { jwtVerify } from 'jose';
 
 const ADMIN_LOGIN_PATH = '/admin/login';
+const SESSION_COOKIE = 'aipress_session';
 
-export function proxy(request: NextRequest) {
+function getSecretKey() {
+    const secret = process.env.JWT_SECRET || 'fallback_dev_secret_change_me';
+    return new TextEncoder().encode(secret);
+}
+
+export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // 1. Check if the user is trying to access the admin area
+    // Only protect admin routes (except login)
     if (pathname.startsWith('/admin') && pathname !== ADMIN_LOGIN_PATH) {
-        const isAuthenticated = request.cookies.get('aipress_auth')?.value === 'true';
+        const sessionCookie = request.cookies.get(SESSION_COOKIE);
 
-        if (!isAuthenticated) {
-            // Redirect to login if not authenticated
-            const loginUrl = new URL(ADMIN_LOGIN_PATH, request.url);
-            return NextResponse.redirect(loginUrl);
+        if (!sessionCookie?.value) {
+            return NextResponse.redirect(new URL(ADMIN_LOGIN_PATH, request.url));
+        }
+
+        try {
+            const { payload } = await jwtVerify(sessionCookie.value, getSecretKey(), {
+                algorithms: ['HS256'],
+            });
+
+            if (payload.role !== 'admin') {
+                return NextResponse.redirect(new URL(ADMIN_LOGIN_PATH, request.url));
+            }
+        } catch {
+            // Token expired or invalid — clear it and redirect
+            const response = NextResponse.redirect(new URL(ADMIN_LOGIN_PATH, request.url));
+            response.cookies.delete(SESSION_COOKIE);
+            return response;
         }
     }
 
     return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
     matcher: '/admin/:path*',
 };

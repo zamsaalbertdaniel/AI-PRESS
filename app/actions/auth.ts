@@ -1,9 +1,8 @@
 "use server";
 
-import { cookies } from 'next/headers';
 import bcrypt from "bcryptjs";
 import { passwordSchema } from "@/lib/validators";
-import { isAdminAuthenticated } from "@/lib/auth";
+import { isAdminAuthenticated, setSessionCookie, clearSessionCookie } from "@/lib/auth";
 
 export async function loginAdminAction(password: string) {
     const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
@@ -20,14 +19,8 @@ export async function loginAdminAction(password: string) {
 
     const matches = await bcrypt.compare(password, adminPasswordHash);
     if (matches) {
-        const cookieStore = await cookies();
-        cookieStore.set('aipress_auth', 'true', {
-            path: '/',
-            maxAge: 86400,
-            sameSite: 'strict',
-            secure: process.env.NODE_ENV === 'production',
-            httpOnly: true,
-        });
+        // Create and set a signed JWT session cookie
+        await setSessionCookie();
         return { success: true };
     }
 
@@ -35,8 +28,7 @@ export async function loginAdminAction(password: string) {
 }
 
 export async function logoutAdminAction() {
-    const cookieStore = await cookies();
-    cookieStore.delete('aipress_auth');
+    await clearSessionCookie();
 }
 
 export async function getAdminSession() {

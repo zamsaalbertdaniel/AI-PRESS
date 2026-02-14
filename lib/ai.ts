@@ -21,6 +21,16 @@ function getGenAI() {
     return genAI;
 }
 
+// Request timeout utility
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+    return Promise.race([
+        promise,
+        new Promise<T>((_, reject) =>
+            setTimeout(() => reject(new Error(`Request timed out after ${ms}ms`)), ms)
+        ),
+    ]);
+}
+
 export async function callAI(
     prompt: string,
     systemPrompt: string = "You are a helpful assistant for AIPress, a futuristic news platform."
@@ -28,10 +38,10 @@ export async function callAI(
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-        console.warn("AI Warning: GEMINI_API_KEY is not set. Returning simulated response.");
+        console.warn("AI Warning: GEMINI_API_KEY is not set.");
         return {
-            success: true,
-            data: "This is a simulated AI response because your Gemini API key is not yet configured in .env.local."
+            success: false,
+            error: "AI service is not configured. Please set GEMINI_API_KEY in environment variables."
         };
     }
 
@@ -41,7 +51,6 @@ export async function callAI(
             systemInstruction: systemPrompt + "\n\nStyle: Warm Futurism. Premium, tech-optimistic, cinematic tone. Language: Romanian/English as requested.",
         });
 
-        // For "SF Magic" we use a chat-like structure for better grounding
         const chat = model.startChat({
             history: [],
             generationConfig: {
@@ -50,14 +59,15 @@ export async function callAI(
             },
         });
 
-        const result = await chat.sendMessage(prompt);
+        const result = await withTimeout(chat.sendMessage(prompt), 30000);
         const response = await result.response;
         const text = response.text();
 
         return { success: true, data: text };
-    } catch (error: any) {
-        console.error("Gemini API Error:", error);
-        return { success: false, error: error.message || "Gemini API Error" };
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Gemini API Error";
+        console.error("Gemini API Error:", message);
+        return { success: false, error: message };
     }
 }
 
@@ -68,25 +78,23 @@ export async function searchAndResearchNews(query: string): Promise<AIResponse> 
     try {
         const model = getGenAI().getGenerativeModel({
             model: "gemini-2.0-flash",
-            tools: [
-                {
-                    // @ts-ignore - Google Search Grounding for Gemini 2.0
-                    googleSearch: {},
-                },
-            ],
+            // Google Search grounding tool — not yet in the @google/generative-ai types
+            tools: [{ googleSearch: {} }] as never,
         });
 
         const prompt = `Research the latest information about: ${query}. 
         Focus on finding at least 3 distinct facts or recent events. 
         Format as a professional summary for a news editor.`;
 
-        const result = await model.generateContent(prompt);
+        const result = await withTimeout(model.generateContent(prompt), 30000);
         const text = result.response.text();
 
         return { success: true, data: text };
-    } catch (error: any) {
-        console.error("Gemini Research Error:", error);
-        return { success: false, error: error.message };
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Gemini Research Error";
+        console.error("Gemini Research Error:", message);
+        // Return failure instead of throwing, so the caller can try fallback
+        return { success: false, error: message };
     }
 }
 

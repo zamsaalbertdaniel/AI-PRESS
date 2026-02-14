@@ -74,7 +74,9 @@ export default async function ArticlePage(props: { params: Params }) {
                 <TLDRBox bullets={[aiTake]} />
 
                 <div className={styles.body}>
-                    <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br/>') }} />
+                    {content.split('\n').filter(Boolean).map((paragraph, idx) => (
+                        <p key={idx} style={{ marginBottom: '1em', lineHeight: 1.8 }}>{paragraph}</p>
+                    ))}
                 </div>
             </div>
         </div>
