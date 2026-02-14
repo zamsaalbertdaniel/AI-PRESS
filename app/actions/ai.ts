@@ -64,12 +64,13 @@ export async function runNeuralScraperAction(): Promise<{
             - "titleRo": Sophisticated Romanian translation of the headline
             - "summaryEn": 2-3 sentence punchy summary in English
             - "summaryRo": Romanian translation of the summary
-            - "contentEn": A detailed 300-500 word article in English. Professional, analytical, and cinematic journalist style. Include technical depth but stay accessible.
+            - "contentEn": A detailed 300-500 word article in English. Professional, analytical, and cinematic journalist style.
             - "category": one of "AI Research", "Industry", "Robotics", "Neuroscience", "Ethics", "Infrastructure"
             - "tag": one of "Breaking", "Analysis", "Trending", "Deep Dive"
+            - "imagePrompt": A detailed image prompt for a "Nano Banana" aesthetic (carbon fiber, yellow energy, sleek, cinematic).
             
             IMPORTANT: Return ONLY a valid JSON array. No conversational text, no markdown code blocks.
-            Make the stories factual, citing real companies or researchers if possible.`,
+            Make the stories factual, citing real companies if possible.`,
             "You are a professional tech journalist AI. You output ONLY valid JSON arrays."
         );
 
@@ -86,6 +87,7 @@ export async function runNeuralScraperAction(): Promise<{
             contentEn: string;
             category: string;
             tag: string;
+            imagePrompt: string;
         }>;
 
         try {
@@ -119,7 +121,7 @@ export async function runNeuralScraperAction(): Promise<{
                 contentRo: "",
                 aiTakeEn: "",
                 aiTakeRo: "",
-                imagePrompt: "",
+                imagePrompt: raw.imagePrompt || "A futuristic scene involving technology and nature.",
                 category: raw.category || "AI Research",
                 tag: raw.tag || "Trending",
                 readTime: `${Math.max(2, wordCount(raw.contentEn || ""))} min read`,
