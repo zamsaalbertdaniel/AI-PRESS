@@ -1,20 +1,44 @@
 import React from 'react';
+import { fetchArticles } from '@/app/actions/articles';
 import GlassCard from '@/components/ui/GlassCard';
 import styles from './QuickBites.module.css';
 
-const BITES = [
-    { id: 1, time: "10m ago", text: "OpenAI releases GPT-4.5 turbo sneak peek." },
-    { id: 2, time: "1h ago", text: "NVIDIA shares jump 5% on new chip news." },
-    { id: 3, time: "2h ago", text: "Midjourney v7 alpha testing begins." },
-    { id: 4, time: "3h ago", text: "Google DeepMind solves new protein folding." },
-];
+function timeAgo(dateStr: string): string {
+    const now = Date.now();
+    const diff = now - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+}
 
-export default function QuickBites() {
+export default async function QuickBites() {
+    const articles = await fetchArticles();
+
+    // Get last 4 published articles for quick bites
+    const published = articles
+        .filter(a => a.status === 'published')
+        .slice(0, 4);
+
+    // If no published articles, show placeholder
+    const bites = published.length > 0
+        ? published.map(a => ({
+            id: a.id,
+            time: timeAgo(a.publishDate),
+            text: a.summaryEn.slice(0, 80) + (a.summaryEn.length > 80 ? '...' : ''),
+        }))
+        : [
+            { id: '1', time: 'Now', text: 'AIPress neural pipeline is initializing...' },
+            { id: '2', time: 'Now', text: 'Waiting for published articles...' },
+        ];
+
     return (
         <div className={styles.wrapper}>
             <h3 className={styles.label}>Quick Bites</h3>
             <div className={styles.scroll}>
-                {BITES.map((bite) => (
+                {bites.map((bite) => (
                     <GlassCard key={bite.id} className={styles.card}>
                         <span className={styles.time}>{bite.time}</span>
                         <p className={styles.text}>{bite.text}</p>

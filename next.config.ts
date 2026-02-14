@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https:",
-              "connect-src 'self' https://generativelanguage.googleapis.com https://*.supabase.co",
+              "connect-src 'self' https://generativelanguage.googleapis.com https://*.supabase.co https://api.coingecko.com",
             ].join('; '),
           },
         ],

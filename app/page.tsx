@@ -2,12 +2,12 @@ import React from 'react';
 import styles from './page.module.css';
 import dynamic from 'next/dynamic';
 import QuickBites from '@/components/home/QuickBites';
+import CryptoHub from '@/components/home/CryptoHub';
 import GlassCard from '@/components/ui/GlassCard';
 import HomeHero from '@/components/home/HomeHero';
 import HomePipeline from '@/components/home/HomePipeline';
 
 const AISearchFloating = dynamic(() => import('@/components/ui/AISearchFloating'));
-const CryptoHub = dynamic(() => import('@/components/home/CryptoHub'));
 
 const TRENDING_ITEMS = [
   {
