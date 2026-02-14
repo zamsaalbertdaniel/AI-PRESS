@@ -56,21 +56,21 @@ export async function runNeuralScraperAction(): Promise<{
     try {
         // Step 1: Ask Gemini to research the latest AI news
         const researchResult = await callAI(
-            `You are a news researcher for an AI & technology news platform.
-            Find 2 real, recent AI/tech news stories from the last 48 hours.
+            `You are a senior news researcher for AIPress, a premium AI & technology news platform.
+            Find 2-3 real, high-impact AI/tech news stories from the last 24-48 hours.
             
             For EACH story, return a JSON array with objects containing:
-            - "titleEn": compelling English headline (max 80 chars)
-            - "titleRo": Romanian translation of the headline
-            - "summaryEn": 1-2 sentence summary in English
+            - "titleEn": Compelling, click-worthy English headline (max 80 chars)
+            - "titleRo": Sophisticated Romanian translation of the headline
+            - "summaryEn": 2-3 sentence punchy summary in English
             - "summaryRo": Romanian translation of the summary
-            - "contentEn": a 150-200 word article in English, professional journalist style
+            - "contentEn": A detailed 300-500 word article in English. Professional, analytical, and cinematic journalist style. Include technical depth but stay accessible.
             - "category": one of "AI Research", "Industry", "Robotics", "Neuroscience", "Ethics", "Infrastructure"
             - "tag": one of "Breaking", "Analysis", "Trending", "Deep Dive"
             
-            IMPORTANT: Return ONLY a valid JSON array, no markdown, no code fences.
-            Make the stories factual and based on real developments.`,
-            "You are a professional tech journalist AI. Only output valid JSON."
+            IMPORTANT: Return ONLY a valid JSON array. No conversational text, no markdown code blocks.
+            Make the stories factual, citing real companies or researchers if possible.`,
+            "You are a professional tech journalist AI. You output ONLY valid JSON arrays."
         );
 
         if (!researchResult.success || !researchResult.data) {

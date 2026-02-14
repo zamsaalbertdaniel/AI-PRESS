@@ -169,6 +169,53 @@
     border-color: var(--primary);
 }
 
+.imagePreview {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 140, 0, 0.2);
+    position: relative;
+}
+
+.previewImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.imagePreview:hover .previewImg {
+    transform: scale(1.05);
+}
+
+.imageOverlay {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.promptInput {
+    width: 100%;
+    background: rgba(20, 20, 28, 0.5);
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-style: italic;
+    resize: none;
+    outline: none;
+}
+
 .textarea {
     flex: 1;
     background: transparent;

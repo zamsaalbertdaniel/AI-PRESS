@@ -120,13 +120,25 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
                     <div className={styles.extraPanel}>
                         <div className={styles.panelHeader}>
-                            <h3 className={styles.extraTitle}>Featured Image Prompt</h3>
+                            <h3 className={styles.extraTitle}>Featured Image</h3>
                             <button className={styles.genBtn} onClick={generateImagePrompt} disabled={isGeneratingImg}>
-                                {isGeneratingImg ? 'Dreaming...' : 'Generate Prompt'}
+                                {isGeneratingImg ? 'Dreaming...' : 'Generate New'}
                             </button>
                         </div>
+
+                        {article.imagePrompt && (
+                            <div className={styles.imagePreview}>
+                                <img
+                                    src={`https://pollinations.ai/p/${encodeURIComponent(article.imagePrompt)}?width=1080&height=720&seed=${article.id}&nologo=true`}
+                                    alt="AI Preview"
+                                    className={styles.previewImg}
+                                />
+                                <div className={styles.imageOverlay}>“Nano Banana” Digital Twin</div>
+                            </div>
+                        )}
+
                         <textarea
-                            className={styles.shortInput}
+                            className={styles.promptInput}
                             value={article.imagePrompt}
                             readOnly
                             placeholder="AI Generated Image Prompt will appear here..."
