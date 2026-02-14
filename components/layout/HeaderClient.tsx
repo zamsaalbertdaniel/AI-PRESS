@@ -43,7 +43,7 @@ export default function HeaderClient({ tickerText }: HeaderClientProps) {
 
                 <div className={styles.rightGroup}>
                     <nav className={styles.nav}>
-                        <Link href="#about" className={styles.link}>{t('nav.about')}</Link>
+                        <Link href="/about" className={styles.link}>{t('nav.about')}</Link>
                         <Link href="#events" className={styles.link}>{t('nav.events')}</Link>
                     </nav>
 

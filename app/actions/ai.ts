@@ -67,7 +67,7 @@ export async function runNeuralScraperAction(): Promise<{
             - "contentEn": A detailed 300-500 word article in English. Professional, analytical, and cinematic journalist style.
             - "category": one of "AI Research", "Industry", "Robotics", "Neuroscience", "Ethics", "Infrastructure"
             - "tag": one of "Breaking", "Analysis", "Trending", "Deep Dive"
-            - "imagePrompt": A detailed image prompt for a "Nano Banana" aesthetic (carbon fiber, yellow energy, sleek, cinematic).
+            - "imagePrompt": A professional, minimalist 3D tech visualization of the core topic. Sleek, high-end CGI, cinematic lighting, corporate-tech aesthetic (slate, amber, white light).
             
             IMPORTANT: Return ONLY a valid JSON array. No conversational text, no markdown code blocks.
             Make the stories factual, citing real companies if possible.`,
