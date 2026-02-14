@@ -18,6 +18,8 @@ export interface Article {
     status: ArticleStatus;
     publishDate: string;
     trendingRank?: number;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface Source {

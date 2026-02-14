@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { Article } from "@/types";
-import { getArticles, getArticleById, updateArticle } from "@/lib/db";
+import { getArticles, getArticleById, updateArticle, deleteArticle } from "@/lib/db";
 import { articleSchema, idSchema } from "@/lib/validators";
 import { requireAdmin } from "@/lib/auth";
 
@@ -33,10 +33,7 @@ export async function deleteArticleAction(id: string) {
     if (!parsed.success) {
         return { success: false, error: "Invalid article id." };
     }
-    const articles = await getArticles();
-    const filtered = articles.filter((a) => a.id !== id);
-    const { saveArticles } = await import("@/lib/db");
-    await saveArticles(filtered);
+    await deleteArticle(id);
     revalidatePath("/");
     revalidatePath("/admin/dashboard");
     return { success: true };
