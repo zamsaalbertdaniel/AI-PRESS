@@ -53,6 +53,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  verification: {
+    google: "but0jyXet3hlSqBOtvFLGzgX249KT9iVUShZPV6HHHw",
+  },
 };
 
 import { LanguageProvider } from "@/context/LanguageContext";
