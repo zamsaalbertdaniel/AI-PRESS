@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { fetchPublishedArticles } from '@/app/actions/articles';
+import { fetchPublishedArticlesPublic } from '@/app/actions/articles';
 import { Article } from '@/types';
 import styles from './BentoGrid.module.css';
 
@@ -11,7 +11,7 @@ export default function BentoGrid({ language = 'en' }: { language?: string }) {
 
     useEffect(() => {
         const load = async () => {
-            const data = await fetchPublishedArticles();
+            const data = await fetchPublishedArticlesPublic();
             setArticles(data);
             setLoading(false);
         };

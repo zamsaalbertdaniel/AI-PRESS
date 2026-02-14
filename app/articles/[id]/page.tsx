@@ -1,7 +1,7 @@
 import React from 'react';
 import TLDRBox from '@/components/ui/TLDRBox';
 import styles from './page.module.css';
-import { fetchArticleById, fetchPublishedArticles } from '@/app/actions/articles';
+import { fetchPublishedArticleByIdPublic, fetchPublishedArticlesPublic } from '@/app/actions/articles';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 
@@ -10,7 +10,7 @@ type Params = Promise<{ id: string }>;
 // 1. Dynamic SEO Metadata
 export async function generateMetadata(props: { params: Params }): Promise<Metadata> {
     const params = await props.params;
-    const article = await fetchArticleById(params.id);
+    const article = await fetchPublishedArticleByIdPublic(params.id);
 
     if (!article) return { title: 'Article Not Found | AIPress' };
 
@@ -34,7 +34,7 @@ export async function generateMetadata(props: { params: Params }): Promise<Metad
 
 // 2. Pre-render existing published articles (Performance)
 export async function generateStaticParams() {
-    const articles = await fetchPublishedArticles();
+    const articles = await fetchPublishedArticlesPublic();
     return articles.map((article) => ({
         id: article.id,
     }));
@@ -45,9 +45,9 @@ export const revalidate = 60;
 
 export default async function ArticlePage(props: { params: Params }) {
     const params = await props.params;
-    const article = await fetchArticleById(params.id);
+    const article = await fetchPublishedArticleByIdPublic(params.id);
 
-    if (!article || article.status !== 'published') {
+    if (!article) {
         notFound();
     }
 

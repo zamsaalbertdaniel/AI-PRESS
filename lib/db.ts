@@ -106,6 +106,20 @@ export async function getArticleById(id: string): Promise<Article | undefined> {
     return toArticle(data);
 }
 
+/**
+ * Fetch a single published article by ID (public-facing — uses anon key + RLS)
+ */
+export async function getPublishedArticleById(id: string): Promise<Article | undefined> {
+    const { data, error } = await getPublicClient()
+        .from("articles")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+    if (error || !data) return undefined;
+    return toArticle(data);
+}
+
 // ────────────────── writes ──────────────────
 
 /**

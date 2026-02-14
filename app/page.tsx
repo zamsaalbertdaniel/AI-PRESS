@@ -7,13 +7,13 @@ import CryptoHub from '@/components/home/CryptoHub';
 import GlassCard from '@/components/ui/GlassCard';
 import HomeHero from '@/components/home/HomeHero';
 import HomePipeline from '@/components/home/HomePipeline';
-import { fetchPublishedArticles } from '@/app/actions/articles';
+import { fetchPublishedArticlesPublic } from '@/app/actions/articles';
 import { Article } from '@/types';
 
 const AISearchFloating = dynamic(() => import('@/components/ui/AISearchFloating'));
 
 export default async function Home() {
-  const articles = await fetchPublishedArticles();
+  const articles = await fetchPublishedArticlesPublic();
 
   // Get top 2 trending articles
   const trendingItems = articles

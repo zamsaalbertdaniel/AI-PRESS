@@ -1,5 +1,5 @@
 import React from 'react';
-import { fetchPublishedArticles } from '@/app/actions/articles';
+import { fetchPublishedArticlesPublic } from '@/app/actions/articles';
 import { Article } from '@/types';
 import GlassCard from '@/components/ui/GlassCard';
 import styles from './QuickBites.module.css';
@@ -16,7 +16,7 @@ function timeAgo(dateStr: string): string {
 }
 
 export default async function QuickBites() {
-    const published = await fetchPublishedArticles();
+    const published = await fetchPublishedArticlesPublic();
 
     // Get last 4 published articles for quick bites
     const recent = published.slice(0, 4);

@@ -2,19 +2,41 @@
 
 import { revalidatePath } from "next/cache";
 import { Article } from "@/types";
-import { getArticles, getPublishedArticles, getArticleById, updateArticle, deleteArticle } from "@/lib/db";
+import { getArticles, getPublishedArticles, getArticleById, getPublishedArticleById, updateArticle, deleteArticle } from "@/lib/db";
 import { articleSchema, idSchema } from "@/lib/validators";
 import { requireAdmin } from "@/lib/auth";
 
-export async function fetchPublishedArticles() {
+// --- PUBLIC ACTIONS ---
+
+/**
+ * Fetch only published articles (Public use)
+ */
+export async function fetchPublishedArticlesPublic() {
     return await getPublishedArticles();
 }
 
+/**
+ * Fetch a single published article by ID (Public use)
+ */
+export async function fetchPublishedArticleByIdPublic(id: string) {
+    return await getPublishedArticleById(id);
+}
+
+// --- ADMIN ACTIONS ---
+
+/**
+ * Fetch all articles including drafts (Admin use)
+ */
 export async function fetchArticles() {
+    await requireAdmin(); // Safety check
     return await getArticles();
 }
 
+/**
+ * Fetch a single article by ID including drafts (Admin use)
+ */
 export async function fetchArticleById(id: string) {
+    await requireAdmin(); // Safety check
     return await getArticleById(id);
 }
 
