@@ -1,0 +1,133 @@
+.footer {
+    position: relative;
+    margin-top: 80px;
+    padding: 60px 0 30px;
+    border-top: 1px solid var(--border-light);
+    background: linear-gradient(180deg, transparent 0%, rgba(10, 10, 12, 0.95) 100%);
+}
+
+.footerGrid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+}
+
+/* Brand column */
+.brand {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-outfit), sans-serif;
+    color: var(--text-main);
+    text-decoration: none;
+}
+
+.logoHighlight {
+    color: var(--neon-orange);
+}
+
+.brandDescription {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    max-width: 300px;
+}
+
+/* Link columns */
+.columnTitle {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--neon-orange);
+    margin-bottom: 16px;
+}
+
+.columnLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.columnLinks a {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.columnLinks a:hover {
+    color: var(--text-main);
+}
+
+/* Bottom bar */
+.bottomBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-light);
+}
+
+.copyright {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.bottomLinks {
+    display: flex;
+    gap: 20px;
+}
+
+.bottomLinks a {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.bottomLinks a:hover {
+    color: var(--neon-orange);
+}
+
+/* Ambient glow */
+.ambientGlow {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 200px;
+    background: radial-gradient(ellipse, rgba(255, 140, 0, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footerGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .brand {
+        grid-column: 1 / -1;
+    }
+
+    .bottomBar {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footerGrid {
+        grid-template-columns: 1fr;
+    }
+}

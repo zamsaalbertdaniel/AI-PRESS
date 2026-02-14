@@ -1,0 +1,57 @@
+.notFound {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    text-align: center;
+    padding: 40px 24px;
+}
+
+.glitch {
+    font-size: clamp(5rem, 15vw, 10rem);
+    font-weight: 800;
+    font-family: var(--font-outfit), sans-serif;
+    background: linear-gradient(135deg, var(--neon-orange) 0%, var(--neon-gold) 50%, var(--cyber-blue) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-shine 4s linear infinite;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 12px;
+}
+
+.description {
+    font-size: 1rem;
+    color: var(--text-muted);
+    max-width: 420px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.homeLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--neon-orange), #e07800);
+    color: #000;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.homeLink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 140, 0, 0.3);
+}
