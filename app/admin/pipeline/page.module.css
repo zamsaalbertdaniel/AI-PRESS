@@ -1,0 +1,223 @@
+.container {
+    padding-bottom: 40px;
+}
+
+.header {
+    margin-bottom: 32px;
+    border-bottom: 1px solid rgba(255, 140, 0, 0.15);
+    padding-bottom: 24px;
+}
+
+.title {
+    font-size: 32px;
+    font-family: 'Fraunces', serif;
+    background: linear-gradient(135deg, #ff4444, #ff8c00, #ffd700);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-shine 4s linear infinite;
+}
+
+@keyframes text-shine {
+    from {
+        background-position: 0% center;
+    }
+
+    to {
+        background-position: 200% center;
+    }
+}
+
+.subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Filter Tabs */
+.filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 140, 0, 0.1);
+    color: var(--text-muted);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filterBtn:hover {
+    background: rgba(255, 140, 0, 0.08);
+    color: var(--foreground);
+}
+
+.filterBtn.active {
+    background: rgba(255, 140, 0, 0.15);
+    border-color: rgba(255, 140, 0, 0.4);
+    color: var(--neon-orange);
+}
+
+.count {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+.filterBtn.active .count {
+    background: rgba(255, 140, 0, 0.25);
+}
+
+/* Articles List */
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    border: 1px dashed rgba(255, 140, 0, 0.15);
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.articleCard {
+    padding: 24px !important;
+}
+
+.cardTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.cardInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--neon-orange);
+    font-weight: 600;
+}
+
+.date {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.articleTitle {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    color: var(--foreground);
+}
+
+.articleSummary {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+/* Card Actions */
+.cardActions {
+    display: flex;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    flex-wrap: wrap;
+}
+
+.processBtn {
+    background: linear-gradient(135deg, #ff8c00, #ffd700);
+    color: #000;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.processBtn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+}
+
+.processBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.publishBtn {
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    color: #2ecc71;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.publishBtn:hover {
+    background: rgba(46, 204, 113, 0.25);
+}
+
+.editBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--foreground);
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.editBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.deleteBtn {
+    background: none;
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.2s;
+    margin-left: auto;
+}
+
+.deleteBtn:hover {
+    opacity: 1;
+    background: rgba(231, 76, 60, 0.1);
+}

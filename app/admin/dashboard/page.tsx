@@ -18,12 +18,17 @@ export default function AdminDashboard() {
     useEffect(() => {
         loadArticles();
     }, []);
+    const [message, setMessage] = useState<string | null>(null);
 
     const runScraper = async () => {
         setLoading(true);
+        setMessage(null);
         const result = await runNeuralScraperAction();
-        if (result.success) {
+        if (result.success && result.articles) {
+            setMessage(`✅ Generated ${result.articles.length} new article(s)!`);
             await loadArticles();
+        } else {
+            setMessage(`❌ ${result.error || 'Scraper failed'}`);
         }
         setLoading(false);
     };
@@ -46,6 +51,19 @@ export default function AdminDashboard() {
                 </div>
             </header>
 
+            {message && (
+                <div style={{
+                    padding: '12px 20px',
+                    marginBottom: '24px',
+                    borderRadius: '8px',
+                    background: message.startsWith('✅') ? 'rgba(46,204,113,0.1)' : 'rgba(231,76,60,0.1)',
+                    border: `1px solid ${message.startsWith('✅') ? 'rgba(46,204,113,0.3)' : 'rgba(231,76,60,0.3)'}`,
+                    fontSize: '14px',
+                    fontWeight: 600,
+                }}>
+                    {message}
+                </div>
+            )}
             <div className={styles.mainGrid}>
                 {/* Content Pipeline - 2/3 of space */}
                 <section className={styles.pipelineSection}>

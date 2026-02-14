@@ -1,9 +1,10 @@
 "use server";
 
 import { Article } from "@/types";
-import { translateToRomanian, generateEditorialTake, generateImagePrompt } from "@/lib/ai";
+import { translateToRomanian, generateEditorialTake, generateImagePrompt, callAI } from "@/lib/ai";
 import { saveArticleAction } from "./articles";
 import { requireAdmin } from "@/lib/auth";
+import { randomUUID } from "crypto";
 
 /**
  * Automates the enrichment of an article using AI
@@ -28,7 +29,7 @@ export async function processArticleWithAI(article: Article) {
             aiTakeRo: editorialRo,
             aiTakeEn: editorialEn,
             imagePrompt: imagePrompt,
-            status: 'ai-processed' // Upgrade status
+            status: 'ai-processed'
         };
 
         // 3. Persist changes
@@ -42,30 +43,102 @@ export async function processArticleWithAI(article: Article) {
 }
 
 /**
- * Advanced: Simulates a "Neuromorphic Scraper" that finds new content
+ * Neural Scraper — Uses Gemini to research real AI news and create articles.
+ * Generates 2-3 articles per run based on real trending topics.
  */
-export async function runNeuralScraperAction() {
+export async function runNeuralScraperAction(): Promise<{
+    success: boolean;
+    articles?: Article[];
+    error?: string;
+}> {
     await requireAdmin();
-    // In a real app, this would fetch from RSS or another API
-    // For this demo, we'll create a new trending draft
-    const newArticle: Article = {
-        id: Date.now().toString(),
-        titleEn: "Neuralink unveils 'Telepathy 2.0' for artistic creation",
-        titleRo: "Neuralink dezvăluie 'Telepathy 2.0' pentru creația artistică",
-        summaryEn: "A new neural bridge allows direct digital painting from visual imagination.",
-        summaryRo: "O nouă punte neuronală permite pictura digitală direct din imaginația vizuală.",
-        contentEn: "Today Elon Musk's Neuralink showcased a breakthrough in BCIs. The new firmware update enables users to stream high-resolution mental images into digital canvases. The latency is under 20ms, making it feel like a sub-perceptual extension of the body.",
-        contentRo: "", // AI will fill this
-        aiTakeEn: "", // AI will fill this
-        aiTakeRo: "", // AI will fill this
-        imagePrompt: "", // AI will fill this
-        category: "Neuroscience",
-        tag: "Breaking",
-        readTime: "4 min read",
-        status: "draft",
-        publishDate: new Date().toISOString()
-    };
 
-    await saveArticleAction(newArticle);
-    return { success: true, article: newArticle };
+    try {
+        // Step 1: Ask Gemini to research the latest AI news
+        const researchResult = await callAI(
+            `You are a news researcher for an AI & technology news platform.
+            Find 2 real, recent AI/tech news stories from the last 48 hours.
+            
+            For EACH story, return a JSON array with objects containing:
+            - "titleEn": compelling English headline (max 80 chars)
+            - "titleRo": Romanian translation of the headline
+            - "summaryEn": 1-2 sentence summary in English
+            - "summaryRo": Romanian translation of the summary
+            - "contentEn": a 150-200 word article in English, professional journalist style
+            - "category": one of "AI Research", "Industry", "Robotics", "Neuroscience", "Ethics", "Infrastructure"
+            - "tag": one of "Breaking", "Analysis", "Trending", "Deep Dive"
+            
+            IMPORTANT: Return ONLY a valid JSON array, no markdown, no code fences.
+            Make the stories factual and based on real developments.`,
+            "You are a professional tech journalist AI. Only output valid JSON."
+        );
+
+        if (!researchResult.success || !researchResult.data) {
+            return { success: false, error: researchResult.error || "AI research failed" };
+        }
+
+        // Step 2: Parse the AI response
+        let rawArticles: Array<{
+            titleEn: string;
+            titleRo: string;
+            summaryEn: string;
+            summaryRo: string;
+            contentEn: string;
+            category: string;
+            tag: string;
+        }>;
+
+        try {
+            // Clean potential markdown code fences
+            let cleaned = researchResult.data.trim();
+            if (cleaned.startsWith("```")) {
+                cleaned = cleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+            }
+            rawArticles = JSON.parse(cleaned);
+        } catch {
+            console.error("Failed to parse AI response:", researchResult.data);
+            return { success: false, error: "Failed to parse AI-generated articles" };
+        }
+
+        if (!Array.isArray(rawArticles) || rawArticles.length === 0) {
+            return { success: false, error: "AI returned no articles" };
+        }
+
+        // Step 3: Create and save each article
+        const savedArticles: Article[] = [];
+        const wordCount = (text: string) => Math.ceil(text.split(/\s+/).length / 200);
+
+        for (const raw of rawArticles.slice(0, 3)) {
+            const article: Article = {
+                id: randomUUID(),
+                titleEn: raw.titleEn || "Untitled",
+                titleRo: raw.titleRo || raw.titleEn || "Fără titlu",
+                summaryEn: raw.summaryEn || "",
+                summaryRo: raw.summaryRo || raw.summaryEn || "",
+                contentEn: raw.contentEn || "",
+                contentRo: "",
+                aiTakeEn: "",
+                aiTakeRo: "",
+                imagePrompt: "",
+                category: raw.category || "AI Research",
+                tag: raw.tag || "Trending",
+                readTime: `${Math.max(2, wordCount(raw.contentEn || ""))} min read`,
+                status: "draft",
+                publishDate: new Date().toISOString(),
+            };
+
+            const result = await saveArticleAction(article);
+            if (result.success) {
+                savedArticles.push(article);
+            }
+        }
+
+        return {
+            success: true,
+            articles: savedArticles,
+        };
+    } catch (error) {
+        console.error("Neural Scraper error:", error);
+        return { success: false, error: "Neural scraper failed" };
+    }
 }
