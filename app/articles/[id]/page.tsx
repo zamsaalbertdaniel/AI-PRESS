@@ -57,6 +57,7 @@ export default async function ArticlePage(props: { params: Params }) {
     const title = language === 'ro' ? article.titleRo : article.titleEn;
     const content = language === 'ro' ? (article.contentRo || article.contentEn) : article.contentEn;
     const aiTake = language === 'ro' ? (article.aiTakeRo || article.aiTakeEn) : article.aiTakeEn;
+    const paragraphs = content.split('\n').map((line) => line.trim()).filter(Boolean);
 
     return (
         <div className={styles.article}>
@@ -74,7 +75,9 @@ export default async function ArticlePage(props: { params: Params }) {
                 <TLDRBox bullets={[aiTake]} />
 
                 <div className={styles.body}>
-                    <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br/>') }} />
+                    {paragraphs.map((paragraph, index) => (
+                        <p key={`${article.id}-p-${index}`}>{paragraph}</p>
+                    ))}
                 </div>
             </div>
         </div>

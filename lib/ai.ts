@@ -1,10 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-/**
- * AIPress AI Utility Layer - Gemini "SF Magic" Edition
- * Manages communication with Gemini 2.0 Flash for content automation and research.
- */
-
 interface AIResponse {
     success: boolean;
     data?: string;
@@ -19,6 +14,15 @@ function getGenAI() {
         genAI = new GoogleGenerativeAI(apiKey);
     }
     return genAI;
+}
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+    return Promise.race([
+        promise,
+        new Promise<T>((_, reject) => {
+            setTimeout(() => reject(new Error(`AI request timed out after ${timeoutMs}ms`)), timeoutMs);
+        }),
+    ]);
 }
 
 export async function callAI(
@@ -41,7 +45,6 @@ export async function callAI(
             systemInstruction: systemPrompt + "\n\nStyle: Warm Futurism. Premium, tech-optimistic, cinematic tone. Language: Romanian/English as requested.",
         });
 
-        // For "SF Magic" we use a chat-like structure for better grounding
         const chat = model.startChat({
             history: [],
             generationConfig: {
@@ -50,7 +53,7 @@ export async function callAI(
             },
         });
 
-        const result = await chat.sendMessage(prompt);
+        const result = await withTimeout(chat.sendMessage(prompt), 12000);
         const response = await result.response;
         const text = response.text();
 
@@ -61,9 +64,6 @@ export async function callAI(
     }
 }
 
-/**
- * Advanced Research: Searches for live news using Google Search Grounding
- */
 export async function searchAndResearchNews(query: string): Promise<AIResponse> {
     try {
         const model = getGenAI().getGenerativeModel({
@@ -80,7 +80,7 @@ export async function searchAndResearchNews(query: string): Promise<AIResponse> 
         Focus on finding at least 3 distinct facts or recent events. 
         Format as a professional summary for a news editor.`;
 
-        const result = await model.generateContent(prompt);
+        const result = await withTimeout(model.generateContent(prompt), 12000);
         const text = result.response.text();
 
         return { success: true, data: text };
@@ -90,18 +90,12 @@ export async function searchAndResearchNews(query: string): Promise<AIResponse> 
     }
 }
 
-/**
- * Specifically handles Romanian translation and adaptation
- */
 export async function translateToRomanian(content: string): Promise<string> {
     const systemPrompt = "Translate the following English news content into natural, professional Romanian. Ensure a modern, tech-focused tone consistent with a premium news platform.";
     const res = await callAI(content, systemPrompt);
     return res.data || content;
 }
 
-/**
- * Generates the 'AIPress Take' (Editorial Perspective)
- */
 export async function generateEditorialTake(content: string, language: 'ro' | 'en' = 'ro'): Promise<string> {
     const systemPrompt = `Analyze the provided news and generate a short, insightful 'Editorial Take' (max 2 sentences). 
     The style should be 'Warm Futurism' - optimistic but critical of cold technology, focusing on human benefit.
@@ -111,9 +105,6 @@ export async function generateEditorialTake(content: string, language: 'ro' | 'e
     return res.data || (language === 'ro' ? "Analiză în curs..." : "Analysis in progress...");
 }
 
-/**
- * Generates a prompt for Midjourney/DALL-E/Imagen based on the news
- */
 export async function generateImagePrompt(content: string): Promise<string> {
     const systemPrompt = "Create a highly detailed, artistic image prompt for Imagen 3 based on this news. Use a 'Warm Futurism' aesthetic: amber lighting, glass materials, soft gradients, cinematic and clean. Do not include any text in the image.";
     const res = await callAI(content, systemPrompt);

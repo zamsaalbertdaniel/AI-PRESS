@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import bcrypt from "bcryptjs";
 import { passwordSchema } from "@/lib/validators";
 import { isAdminAuthenticated } from "@/lib/auth";
+import { generateAdminJWT } from "@/lib/jwt";
 
 export async function loginAdminAction(password: string) {
     const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
@@ -20,8 +21,15 @@ export async function loginAdminAction(password: string) {
 
     const matches = await bcrypt.compare(password, adminPasswordHash);
     if (matches) {
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            console.error("CRITICAL: JWT_SECRET environment variable is NOT SET.");
+            return { success: false, error: 'System configuration error. Please contact tech support.' };
+        }
+
+        const token = await generateAdminJWT(jwtSecret);
         const cookieStore = await cookies();
-        cookieStore.set('aipress_auth', 'true', {
+        cookieStore.set('aipress_auth', token, {
             path: '/',
             maxAge: 86400,
             sameSite: 'strict',
