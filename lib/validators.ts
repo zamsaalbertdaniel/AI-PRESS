@@ -5,9 +5,9 @@ export const articleSchema = z.object({
     titleEn: z.string().min(1),
     titleRo: z.string().min(1),
     summaryEn: z.string().min(1),
-    summaryRo: z.string().min(1),
+    summaryRo: z.string(),
     contentEn: z.string().min(1),
-    contentRo: z.string().min(1),
+    contentRo: z.string(),          // empty until AI Processing
     aiTakeEn: z.string(),
     aiTakeRo: z.string(),
     imagePrompt: z.string(),

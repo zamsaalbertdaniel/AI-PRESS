@@ -115,29 +115,13 @@ export async function getArticleById(id: string): Promise<Article | undefined> {
 export async function updateArticle(article: Article): Promise<void> {
     const row = toRow(article);
 
-    // If the caller provided an ID, try to update first
-    if (article.id) {
-        const { error } = await getAdminClient()
-            .from("articles")
-            .update(row)
-            .eq("id", article.id);
-
-        if (!error) return;
-
-        // If update matched zero rows, fall through to insert
-        if (error.code !== "PGRST116") {
-            console.error("updateArticle error:", error.message);
-            return;
-        }
-    }
-
-    // Insert new article
-    const { error: insertError } = await getAdminClient()
+    // Use upsert — inserts if ID doesn't exist, updates if it does
+    const { error } = await getAdminClient()
         .from("articles")
-        .insert({ ...row, id: article.id || undefined });
+        .upsert({ ...row, id: article.id }, { onConflict: "id" });
 
-    if (insertError) {
-        console.error("insertArticle error:", insertError.message);
+    if (error) {
+        console.error("updateArticle upsert error:", error.message);
     }
 }
 
