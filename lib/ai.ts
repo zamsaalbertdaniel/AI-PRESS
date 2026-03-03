@@ -124,8 +124,8 @@ export async function generateEditorialTake(content: string, language: 'ro' | 'e
  */
 export async function generateImagePrompt(content: string): Promise<string> {
     const systemPrompt = `Create a highly detailed, premium artistic image prompt for an AI image generator (like Flux or Midjourney). 
-    Aesthetic: "Nano Banana" — a fusion of ultra-high-tech cyberpunk and organic warmth. 
-    Visually: Sleek carbon fiber, vibrant yellow energy lines, cinematic lighting, glass surfaces, and a sense of sophisticated futurism. 
+    Aesthetic: "Warm Futurism" — a fusion of high-tech precision and organic warmth. 
+    Visually: Sleek dark surfaces, amber and cyan energy accents, cinematic lighting, glass and carbon fiber elements, professional editorial tech aesthetic. 
     Tone: Professional, high-contrast, clean. No text/watermarks. 
     Focus: Abstract or realistic representation of the following news content:`;
 

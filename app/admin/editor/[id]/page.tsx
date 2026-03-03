@@ -129,18 +129,18 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
                         {article.imagePrompt && (
                             <div className={styles.imagePreview}>
                                 <img
-                                    src={`https://pollinations.ai/p/${encodeURIComponent(article.imagePrompt)}?width=1080&height=720&seed=${article.id}&nologo=true`}
-                                    alt="AI Preview"
+                                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(article.imagePrompt)}?width=1080&height=720&seed=${article.id?.slice(0, 8)}&nologo=true`}
+                                    alt="AI Generated Preview"
                                     className={styles.previewImg}
                                 />
-                                <div className={styles.imageOverlay}>“Nano Banana” Digital Twin</div>
+                                <div className={styles.imageOverlay}>AI Generated Preview</div>
                             </div>
                         )}
 
                         <textarea
                             className={styles.promptInput}
                             value={article.imagePrompt}
-                            readOnly
+                            onChange={(e) => handleSave({ imagePrompt: e.target.value })}
                             placeholder="AI Generated Image Prompt will appear here..."
                         />
                     </div>
