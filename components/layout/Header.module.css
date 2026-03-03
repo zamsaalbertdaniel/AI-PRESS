@@ -150,3 +150,81 @@
     opacity: 0.2;
     margin: 0 4px;
 }
+
+/* ─── Hamburger Button ─── */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1001;
+}
+
+.hamburgerLine {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text-main);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.hamburgerOpen1 {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburgerOpen2 {
+    opacity: 0;
+}
+
+.hamburgerOpen3 {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ─── Mobile Responsive ─── */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .socials {
+        display: none;
+    }
+
+    .rightGroup {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 24px;
+        background: rgba(8, 7, 7, 0.95);
+        backdrop-filter: blur(25px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transform: translateY(-10px);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .rightGroupOpen {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .nav {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .link {
+        font-size: 14px;
+    }
+}

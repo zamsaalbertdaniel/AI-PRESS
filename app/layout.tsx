@@ -56,12 +56,18 @@ export const metadata: Metadata = {
   verification: {
     google: "but0jyXet3hlSqBOtvFLGzgX249KT9iVUShZPV6HHHw",
   },
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 import { LanguageProvider } from "@/context/LanguageContext";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProgressBar from "@/components/layout/ProgressBar";
+import HtmlLangSync from "@/components/layout/HtmlLangSync";
 
 export default function RootLayout({
   children,
@@ -72,6 +78,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${outfit.variable} ${fraunces.variable} antialiased`}>
         <LanguageProvider>
+          <HtmlLangSync />
           <ProgressBar />
           <Header />
           <main style={{ paddingTop: "80px", minHeight: "100vh" }}>

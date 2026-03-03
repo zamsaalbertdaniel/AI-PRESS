@@ -6,7 +6,8 @@ const ADMIN_LOGIN_PATH = '/admin/login';
 const SESSION_COOKIE = 'aipress_session';
 
 function getSecretKey() {
-    const secret = process.env.JWT_SECRET || 'fallback_dev_secret_change_me';
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new Error('CRITICAL: JWT_SECRET environment variable is not set.');
     return new TextEncoder().encode(secret);
 }
 
@@ -40,6 +41,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
 }
 
-export const config = {
+export const proxyConfig = {
     matcher: '/admin/:path*',
 };

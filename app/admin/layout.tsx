@@ -1,7 +1,6 @@
 "use client";
 import { AdminProvider, useAdmin } from "@/context/AdminContext";
-import { useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import styles from "./layout.module.css";
 import Link from "next/link";
 

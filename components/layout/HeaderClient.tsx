@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import styles from './Header.module.css';
@@ -10,6 +10,7 @@ interface HeaderClientProps {
 
 export default function HeaderClient({ tickerText }: HeaderClientProps) {
     const { language, toggleLanguage, t } = useLanguage();
+    const [menuOpen, setMenuOpen] = useState(false);
 
     return (
         <header className={styles.header}>
@@ -41,10 +42,22 @@ export default function HeaderClient({ tickerText }: HeaderClientProps) {
                     AI<span className={styles.highlight}>Press</span>
                 </Link>
 
-                <div className={styles.rightGroup}>
+                {/* Hamburger button (mobile) */}
+                <button
+                    className={styles.hamburger}
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    aria-label="Toggle menu"
+                    aria-expanded={menuOpen}
+                >
+                    <span className={`${styles.hamburgerLine} ${menuOpen ? styles.hamburgerOpen1 : ''}`} />
+                    <span className={`${styles.hamburgerLine} ${menuOpen ? styles.hamburgerOpen2 : ''}`} />
+                    <span className={`${styles.hamburgerLine} ${menuOpen ? styles.hamburgerOpen3 : ''}`} />
+                </button>
+
+                <div className={`${styles.rightGroup} ${menuOpen ? styles.rightGroupOpen : ''}`}>
                     <nav className={styles.nav}>
-                        <Link href="/about" className={styles.link}>{t('nav.about')}</Link>
-                        <Link href="#events" className={styles.link}>{t('nav.events')}</Link>
+                        <Link href="/about" className={styles.link} onClick={() => setMenuOpen(false)}>{t('nav.about')}</Link>
+                        <Link href="/events" className={styles.link} onClick={() => setMenuOpen(false)}>{t('nav.events')}</Link>
                     </nav>
 
                     <button onClick={toggleLanguage} className={styles.langToggle} aria-label="Toggle Language">

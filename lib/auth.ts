@@ -6,7 +6,8 @@ import { SignJWT, jwtVerify } from "jose";
  * Uses HMAC-SHA256 signed tokens stored in httpOnly cookies
  */
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET || "fallback_dev_secret_change_me";
+const JWT_SECRET_KEY = process.env.JWT_SECRET;
+if (!JWT_SECRET_KEY) throw new Error('CRITICAL: JWT_SECRET environment variable is not set.');
 const SESSION_COOKIE = "aipress_session";
 const SESSION_DURATION = 24 * 60 * 60; // 24 hours in seconds
 

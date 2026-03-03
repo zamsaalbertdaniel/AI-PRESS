@@ -1,13 +1,13 @@
 import React from 'react';
 import { fetchCryptoPrices } from '@/app/actions/crypto';
-import { fetchArticles } from '@/app/actions/articles';
+import { fetchPublishedArticlesPublic } from '@/app/actions/articles';
 import HeaderClient from './HeaderClient';
 
 export default async function Header() {
-    // Fetch data server-side
+    // Fetch data server-side (public — no auth required)
     const [cryptoData, articles] = await Promise.all([
         fetchCryptoPrices(),
-        fetchArticles(),
+        fetchPublishedArticlesPublic(),
     ]);
 
     // Build ticker items from crypto prices

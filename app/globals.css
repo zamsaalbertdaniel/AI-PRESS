@@ -29,6 +29,12 @@
 
   --radius: 8px;
   /* High-tech industrial radius */
+
+  /* Glass-panel utilities */
+  --glass-bg: rgba(20, 20, 30, 0.6);
+  --glass-blur: 16px;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-warm: 0 4px 24px rgba(255, 140, 0, 0.08);
 }
 
 /* Force dark theme for the interstellar feel */
@@ -43,7 +49,7 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   color: var(--text-main);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-outfit), 'Outfit', sans-serif;
 }
 
 /* SF Magic Animations */

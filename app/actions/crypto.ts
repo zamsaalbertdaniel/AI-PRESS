@@ -73,13 +73,7 @@ export async function fetchCryptoPrices(): Promise<CryptoAsset[]> {
     }
 }
 
-/** Fallback if API is unreachable on first load */
+/** Fallback if API is unreachable on first load — return empty to avoid showing $0 */
 function getFallbackData(): CryptoAsset[] {
-    return [
-        { id: "bitcoin", name: "Bitcoin", symbol: "BTC", price: 0, change24h: 0, marketCap: 0, rank: 1, image: "" },
-        { id: "ethereum", name: "Ethereum", symbol: "ETH", price: 0, change24h: 0, marketCap: 0, rank: 2, image: "" },
-        { id: "tether", name: "Tether", symbol: "USDT", price: 0, change24h: 0, marketCap: 0, rank: 3, image: "" },
-        { id: "binancecoin", name: "BNB", symbol: "BNB", price: 0, change24h: 0, marketCap: 0, rank: 4, image: "" },
-        { id: "solana", name: "Solana", symbol: "SOL", price: 0, change24h: 0, marketCap: 0, rank: 5, image: "" },
-    ];
+    return [];
 }

@@ -8,7 +8,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import HomeHero from '@/components/home/HomeHero';
 import HomePipeline from '@/components/home/HomePipeline';
 import { fetchPublishedArticlesPublic } from '@/app/actions/articles';
-import { Article } from '@/types';
+import type { Article } from '@/types';
 
 const AISearchFloating = dynamic(() => import('@/components/ui/AISearchFloating'));
 
@@ -28,16 +28,8 @@ export default async function Home() {
       meta: `${a.category} • ${a.readTime}`
     }));
 
-  // Fallback if no trending items
-  const finalTrending = trendingItems.length > 0 ? trendingItems : [
-    {
-      id: "demo1",
-      badge: "HOT TOPIC",
-      title: "The Future is Neural",
-      excerpt: "AIPress is fetching the latest trending AI insights...",
-      meta: "Analysis • 5 min read"
-    }
-  ];
+  // No fallback — only show real trending articles
+  const finalTrending = trendingItems;
 
   return (
     <main className={styles.main}>
@@ -54,7 +46,7 @@ export default async function Home() {
             </div>
             <div className={styles.trendingGrid}>
               {finalTrending.map((item, index) => (
-                <Link href={item.id.startsWith('demo') ? '#' : `/articles/${item.id}`} key={item.id} style={{ textDecoration: 'none' }}>
+                <Link href={`/articles/${item.id}`} key={item.id} style={{ textDecoration: 'none' }}>
                   <GlassCard className={styles.trendingCard} hoverEffect={true}>
                     <div className={`${styles.trendingMedia} ${index === 0 ? styles.mediaAurora : styles.mediaCircuit}`}>
                       <div className={styles.mediaOverlay}></div>
@@ -88,7 +80,7 @@ export default async function Home() {
                 <GlassCard className={styles.explainerCard}>
                   <h3 className={styles.explainerTitle}>AI Focus: Transformer</h3>
                   <p className={styles.explainerText}>The neural architecture that birthed GPT. Understanding self-attention mechanisms.</p>
-                  <button className={styles.explainerBtn}>Read Guide →</button>
+                  <Link href="/about" className={styles.explainerBtn}>Discover AIPress →</Link>
                 </GlassCard>
               </div>
               <div className={styles.socialStrip}>

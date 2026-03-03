@@ -1,9 +1,8 @@
 import React from 'react';
-import TLDRBox from '@/components/ui/TLDRBox';
-import styles from './page.module.css';
 import { fetchPublishedArticleByIdPublic, fetchPublishedArticlesPublic } from '@/app/actions/articles';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import ArticleContent from './ArticleContent';
 
 type Params = Promise<{ id: string }>;
 
@@ -51,34 +50,49 @@ export default async function ArticlePage(props: { params: Params }) {
         notFound();
     }
 
-    // Simplified language handling for the demo Article Page
-    const language: string = 'en';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aipress.business';
 
-    const title = language === 'ro' ? article.titleRo : article.titleEn;
-    const content = language === 'ro' ? (article.contentRo || article.contentEn) : article.contentEn;
-    const aiTake = language === 'ro' ? (article.aiTakeRo || article.aiTakeEn) : article.aiTakeEn;
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        headline: article.titleEn,
+        description: article.summaryEn,
+        datePublished: article.publishDate,
+        author: {
+            '@type': 'Organization',
+            name: 'AIPress',
+            url: siteUrl,
+        },
+        publisher: {
+            '@type': 'Organization',
+            name: 'AIPress',
+            url: siteUrl,
+        },
+        mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `${siteUrl}/articles/${article.id}`,
+        },
+        articleSection: article.category,
+    };
 
     return (
-        <div className={styles.article}>
-            <header className={styles.header}>
-                <div className="container-custom">
-                    <span className={styles.category}>{article.category}</span>
-                    <h1 className={styles.title}>{title}</h1>
-                    <div className={styles.meta}>
-                        <span>By AI Press</span> • <span>{article.readTime}</span> • <span>{new Date(article.publishDate).toLocaleDateString()}</span>
-                    </div>
-                </div>
-            </header>
-
-            <div className={`container-custom ${styles.content}`}>
-                <TLDRBox bullets={[aiTake]} />
-
-                <div className={styles.body}>
-                    {content.split('\n').filter(Boolean).map((paragraph, idx) => (
-                        <p key={idx} style={{ marginBottom: '1em', lineHeight: 1.8 }}>{paragraph}</p>
-                    ))}
-                </div>
-            </div>
-        </div>
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <ArticleContent
+                titleEn={article.titleEn}
+                titleRo={article.titleRo}
+                contentEn={article.contentEn}
+                contentRo={article.contentRo}
+                aiTakeEn={article.aiTakeEn}
+                aiTakeRo={article.aiTakeRo}
+                category={article.category}
+                readTime={article.readTime}
+                publishDate={article.publishDate}
+            />
+        </>
     );
 }
+

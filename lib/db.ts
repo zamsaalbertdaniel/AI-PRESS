@@ -154,12 +154,21 @@ export async function deleteArticle(id: string): Promise<void> {
 }
 
 /**
- * Overwrite all articles (legacy compat — prefer updateArticle / deleteArticle)
+ * @deprecated DANGEROUS: Deletes ALL articles then re-inserts.
+ * Use updateArticle() for upserts and deleteArticle() for removal instead.
+ * This function is kept only for emergency recovery and will throw if called without override.
  */
-export async function saveArticles(articles: Article[]): Promise<void> {
+export async function saveArticles(articles: Article[], confirmOverwrite = false): Promise<void> {
+    if (!confirmOverwrite) {
+        throw new Error(
+            "saveArticles() is deprecated and dangerous — it deletes ALL articles. " +
+            "Use updateArticle() / deleteArticle() instead. " +
+            "Pass confirmOverwrite=true only for emergency recovery."
+        );
+    }
+
     const admin = getAdminClient();
 
-    // Delete removed articles, upsert remaining
     const { error: clearError } = await admin.from("articles").delete().neq("id", "");
     if (clearError) {
         console.error("saveArticles clear error:", clearError.message);
