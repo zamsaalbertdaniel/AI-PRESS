@@ -5,6 +5,7 @@ import StatusBadge from '@/components/admin/StatusBadge';
 import { useRouter } from 'next/navigation';
 import { fetchArticleById, saveArticleAction } from '@/app/actions/articles';
 import { processArticleWithAI } from '@/app/actions/ai';
+import { generateArticleImage } from '@/app/actions/images';
 import { Article } from '@/types';
 
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
@@ -14,6 +15,7 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     const [isSaving, setIsSaving] = useState(false);
     const [isProcessingAI, setIsProcessingAI] = useState(false);
     const [isGeneratingImg, setIsGeneratingImg] = useState(false);
+    const [imgStatus, setImgStatus] = useState<string>('');
 
     useEffect(() => {
         const load = async () => {
@@ -44,16 +46,37 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
         setIsProcessingAI(false);
     };
 
-    const generateImagePrompt = async () => {
+    const handleGenerateImage = async () => {
         if (!article) return;
         setIsGeneratingImg(true);
-        // Using the same process logic but specifically for prompt if desired, 
-        // or just rely on handleAIProcess for everything.
-        // For a dedicated button:
-        const { generateImagePrompt: aiGenPrompt } = await import("@/lib/ai");
-        const prompt = await aiGenPrompt(article.contentEn);
-        await handleSave({ imagePrompt: prompt });
+        setImgStatus('Generating AI prompt...');
+
+        const result = await generateArticleImage(
+            article.id,
+            article.contentEn,
+            article.imagePrompt || undefined
+        );
+
+        if (result.success && result.imageUrl) {
+            setArticle(prev => prev ? {
+                ...prev,
+                imageUrl: result.imageUrl,
+                imagePrompt: result.imagePrompt || prev.imagePrompt,
+            } : prev);
+            setImgStatus('✅ Image generated & saved!');
+        } else {
+            // Even if image generation failed, save the prompt for later retry
+            if (result.imagePrompt) {
+                setArticle(prev => prev ? {
+                    ...prev,
+                    imagePrompt: result.imagePrompt || prev.imagePrompt,
+                } : prev);
+            }
+            setImgStatus(`⚠️ ${result.error || 'Generation failed'}`);
+        }
+
         setIsGeneratingImg(false);
+        setTimeout(() => setImgStatus(''), 8000);
     };
 
     const handleApprove = async () => {
@@ -121,27 +144,41 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
                     <div className={styles.extraPanel}>
                         <div className={styles.panelHeader}>
                             <h3 className={styles.extraTitle}>Featured Image</h3>
-                            <button className={styles.genBtn} onClick={generateImagePrompt} disabled={isGeneratingImg}>
-                                {isGeneratingImg ? 'Dreaming...' : 'Generate New'}
+                            <button className={styles.genBtn} onClick={handleGenerateImage} disabled={isGeneratingImg}>
+                                {isGeneratingImg ? '🎨 Generating...' : '🖼️ Generate & Save'}
                             </button>
                         </div>
 
-                        {article.imagePrompt && (
+                        {imgStatus && (
+                            <div style={{
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                background: imgStatus.startsWith('✅') ? 'rgba(0,200,100,0.1)' : imgStatus.startsWith('⚠') ? 'rgba(255,140,0,0.1)' : 'rgba(0,209,255,0.1)',
+                                color: imgStatus.startsWith('✅') ? '#00c864' : imgStatus.startsWith('⚠') ? '#FF8C00' : '#00D1FF',
+                                fontSize: '12px',
+                                marginBottom: '12px',
+                            }}>
+                                {imgStatus}
+                            </div>
+                        )}
+
+                        {/* Show saved image from Supabase Storage */}
+                        {article.imageUrl && (
                             <div className={styles.imagePreview}>
                                 <img
-                                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(article.imagePrompt)}?width=1080&height=720&seed=${article.id?.slice(0, 8)}&nologo=true`}
-                                    alt="AI Generated Preview"
+                                    src={article.imageUrl}
+                                    alt="Article Featured Image"
                                     className={styles.previewImg}
                                 />
-                                <div className={styles.imageOverlay}>AI Generated Preview</div>
+                                <div className={styles.imageOverlay}>Stored in Supabase ✓</div>
                             </div>
                         )}
 
                         <textarea
                             className={styles.promptInput}
-                            value={article.imagePrompt}
+                            value={article.imagePrompt || ''}
                             onChange={(e) => handleSave({ imagePrompt: e.target.value })}
-                            placeholder="AI Generated Image Prompt will appear here..."
+                            placeholder="AI image prompt will appear here. You can edit it before generating."
                         />
                     </div>
                 </div>
