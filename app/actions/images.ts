@@ -5,48 +5,65 @@ import { generateImagePrompt } from "@/lib/ai";
 
 /**
  * Server-side image generation for articles.
- * 1. Generates an image prompt via Gemini AI
- * 2. Fetches the image from Pollinations.ai server-side (with retry)
+ * Uses Gemini 2.0 Flash native image generation (no third-party dependencies).
+ * 1. Generates an image prompt via Gemini AI (text model)
+ * 2. Generates the actual image via Gemini REST API (image model)
  * 3. Uploads to Supabase Storage for permanent hosting
  * 4. Returns the public URL
  */
 
-const POLLINATIONS_URL = "https://image.pollinations.ai/prompt";
 const IMAGE_BUCKET = "article-images";
 
-async function fetchImageWithRetry(prompt: string, maxRetries = 3): Promise<Buffer | null> {
-    const url = `${POLLINATIONS_URL}/${encodeURIComponent(prompt)}?width=1080&height=720&nologo=true`;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-            console.log(`[ImageGen] Attempt ${attempt}/${maxRetries}...`);
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 60000); // 60s timeout
-
-            const response = await fetch(url, {
-                signal: controller.signal,
-                headers: { 'Accept': 'image/*' },
-            });
-            clearTimeout(timeout);
-
-            if (!response.ok) {
-                console.warn(`[ImageGen] HTTP ${response.status} on attempt ${attempt}`);
-                continue;
-            }
-
-            const contentType = response.headers.get('content-type') || '';
-            if (!contentType.startsWith('image/')) {
-                console.warn(`[ImageGen] Unexpected content-type: ${contentType}`);
-                continue;
-            }
-
-            const arrayBuffer = await response.arrayBuffer();
-            return Buffer.from(arrayBuffer);
-        } catch (err) {
-            console.warn(`[ImageGen] Attempt ${attempt} failed:`, err instanceof Error ? err.message : err);
-        }
+async function generateImageWithGemini(prompt: string): Promise<Buffer | null> {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        console.error("[ImageGen] GEMINI_API_KEY not set");
+        return null;
     }
-    return null;
+
+    try {
+        // Use Gemini 2.0 Flash experimental with image generation
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `Generate a high-quality, professional image based on this description. No text or watermarks in the image:\n\n${prompt}`
+                    }]
+                }],
+                generationConfig: {
+                    responseModalities: ["IMAGE", "TEXT"],
+                    responseMimeType: "text/plain",
+                }
+            }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`[ImageGen] Gemini API error ${response.status}:`, errorText);
+            return null;
+        }
+
+        const data = await response.json();
+        const parts = data?.candidates?.[0]?.content?.parts || [];
+
+        // Find the image part in the response
+        for (const part of parts) {
+            if (part.inlineData?.mimeType?.startsWith("image/")) {
+                const base64 = part.inlineData.data;
+                return Buffer.from(base64, "base64");
+            }
+        }
+
+        console.warn("[ImageGen] No image data in Gemini response");
+        return null;
+    } catch (err) {
+        console.error("[ImageGen] Gemini image generation error:", err instanceof Error ? err.message : err);
+        return null;
+    }
 }
 
 async function ensureBucketExists() {
@@ -96,15 +113,17 @@ export async function generateArticleImage(
         const prompt = existingPrompt || await generateImagePrompt(contentEn);
         console.log(`[ImageGen] Prompt: ${prompt.slice(0, 80)}...`);
 
-        // 2. Fetch image from Pollinations server-side
-        const imageBuffer = await fetchImageWithRetry(prompt);
+        // 2. Generate image with Gemini
+        const imageBuffer = await generateImageWithGemini(prompt);
         if (!imageBuffer) {
             return {
                 success: false,
                 imagePrompt: prompt,
-                error: "Image generation service is temporarily unavailable. The prompt was saved — you can retry later."
+                error: "Image generation failed. The prompt was saved — try editing and retrying."
             };
         }
+
+        console.log(`[ImageGen] Image generated: ${imageBuffer.length} bytes`);
 
         // 3. Upload to Supabase Storage
         const imageUrl = await uploadToStorage(imageBuffer, articleId);
@@ -112,7 +131,7 @@ export async function generateArticleImage(
             return {
                 success: false,
                 imagePrompt: prompt,
-                error: "Failed to upload image to storage. Please check Supabase configuration."
+                error: "Failed to upload image to storage. Please check Supabase Storage configuration."
             };
         }
 
