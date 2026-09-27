@@ -46,6 +46,12 @@ export default function BentoGrid({ language = 'en' }: { language?: string }) {
                             ${isTall ? styles.tallItem : ''}
                         `}
                     >
+                        {article.imageUrl && (
+                            <div className={styles.media}>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={article.imageUrl} alt={article.titleEn} className={styles.mediaImg} loading="lazy" />
+                            </div>
+                        )}
                         <span className={styles.tagOrange}>{article.tag}</span>
                         <h2 className={isHero ? styles.heroTitle : styles.stdTitle}>
                             {language === 'ro' ? article.titleRo : article.titleEn}

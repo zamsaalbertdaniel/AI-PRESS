@@ -1,5 +1,14 @@
 import { Article } from "@/types";
 import { getPublicClient, getAdminClient } from "./supabase";
+import localArticles from "@/data/articles.json";
+
+/**
+ * Local fallback: when Supabase is unreachable (paused project, network error),
+ * serve articles from the bundled JSON snapshot so the site stays online.
+ */
+function getLocalArticles(): Article[] {
+    return (localArticles as Article[]).filter((a) => a.status === "published");
+}
 
 /**
  * AIPress DB Layer — Supabase Edition
@@ -62,62 +71,82 @@ function toRow(article: Article): Record<string, unknown> {
  * Fetch all articles (admin view — uses service_role to bypass RLS)
  */
 export async function getArticles(): Promise<Article[]> {
-    const { data, error } = await getAdminClient()
-        .from("articles")
-        .select("*")
-        .order("publish_date", { ascending: false });
+    try {
+        const { data, error } = await getAdminClient()
+            .from("articles")
+            .select("*")
+            .order("publish_date", { ascending: false });
 
-    if (error) {
-        console.error("getArticles error:", error.message);
-        return [];
+        if (error) {
+            console.error("getArticles error:", error.message);
+            return localArticles as Article[];
+        }
+
+        return (data ?? []).map(toArticle);
+    } catch (e) {
+        console.error("getArticles unreachable, using local fallback:", e);
+        return localArticles as Article[];
     }
-
-    return (data ?? []).map(toArticle);
 }
 
 /**
  * Fetch only published articles (public-facing — uses anon key + RLS)
  */
 export async function getPublishedArticles(): Promise<Article[]> {
-    const { data, error } = await getPublicClient()
-        .from("articles")
-        .select("*")
-        .order("publish_date", { ascending: false });
+    try {
+        const { data, error } = await getPublicClient()
+            .from("articles")
+            .select("*")
+            .order("publish_date", { ascending: false });
 
-    if (error) {
-        console.error("getPublishedArticles error:", error.message);
-        return [];
+        if (error) {
+            console.error("getPublishedArticles error:", error.message);
+            return getLocalArticles();
+        }
+
+        return (data ?? []).map(toArticle);
+    } catch (e) {
+        console.error("getPublishedArticles unreachable, using local fallback:", e);
+        return getLocalArticles();
     }
-
-    return (data ?? []).map(toArticle);
 }
 
 /**
  * Fetch a single article by ID (admin — bypasses RLS so drafts are visible)
  */
 export async function getArticleById(id: string): Promise<Article | undefined> {
-    const { data, error } = await getAdminClient()
-        .from("articles")
-        .select("*")
-        .eq("id", id)
-        .single();
+    try {
+        const { data, error } = await getAdminClient()
+            .from("articles")
+            .select("*")
+            .eq("id", id)
+            .single();
 
-    if (error || !data) return undefined;
-    return toArticle(data);
+        if (error || !data) return undefined;
+        return toArticle(data);
+    } catch (e) {
+        console.error("getArticleById unreachable, using local fallback:", e);
+        return (localArticles as Article[]).find((a) => a.id === id);
+    }
 }
 
 /**
  * Fetch a single published article by ID (public-facing — uses anon key + RLS)
  */
 export async function getPublishedArticleById(id: string): Promise<Article | undefined> {
-    const { data, error } = await getPublicClient()
-        .from("articles")
-        .select("*")
-        .eq("id", id)
-        .single();
+    try {
+        const { data, error } = await getPublicClient()
+            .from("articles")
+            .select("*")
+            .eq("id", id)
+            .single();
 
-    if (error || !data) return undefined;
-    return toArticle(data);
+        if (error || !data) return undefined;
+        return toArticle(data);
+    } catch (e) {
+        console.error("getPublishedArticleById unreachable, using local fallback:", e);
+        return getLocalArticles().find((a) => a.id === id);
+    }
 }
 
 // ────────────────── writes ──────────────────
