@@ -48,7 +48,12 @@ export async function saveArticleAction(article: Article) {
         console.error("Validation failed:", errorMsg);
         return { success: false, error: `Validation failed: ${errorMsg}` };
     }
-    await updateArticle(article);
+    try {
+        await updateArticle(article);
+    } catch (e) {
+        console.error("saveArticleAction failed:", e);
+        return { success: false, error: e instanceof Error ? e.message : "Save failed" };
+    }
     revalidatePath("/");
     revalidatePath("/admin/dashboard");
     revalidatePath(`/articles/${article.id}`);
@@ -61,7 +66,12 @@ export async function deleteArticleAction(id: string) {
     if (!parsed.success) {
         return { success: false, error: "Invalid article id." };
     }
-    await deleteArticle(id);
+    try {
+        await deleteArticle(id);
+    } catch (e) {
+        console.error("deleteArticleAction failed:", e);
+        return { success: false, error: e instanceof Error ? e.message : "Delete failed" };
+    }
     revalidatePath("/");
     revalidatePath("/admin/dashboard");
     return { success: true };

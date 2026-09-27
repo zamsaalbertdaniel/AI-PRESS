@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Articles are JSON files in the repo; make sure server functions can read them.
+  outputFileTracingIncludes: { "/**": ["./content/**"] },
   async headers() {
     return [
       {
@@ -34,7 +36,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https:",
-              "connect-src 'self' https://generativelanguage.googleapis.com https://*.supabase.co https://api.coingecko.com",
+              "connect-src 'self' https://generativelanguage.googleapis.com https://api.coingecko.com",
             ].join('; '),
           },
         ],

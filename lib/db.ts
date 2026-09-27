@@ -1,214 +1,89 @@
+import { promises as fs } from "fs";
+import path from "path";
 import { Article } from "@/types";
-import { getPublicClient, getAdminClient } from "./supabase";
-import localArticles from "@/data/articles.json";
+import { githubEnabled, ghGetFile, ghListDir, ghPutFile, ghDeleteFile } from "./github";
 
 /**
- * Local fallback: when Supabase is unreachable (paused project, network error),
- * serve articles from the bundled JSON snapshot so the site stays online.
- */
-function getLocalArticles(): Article[] {
-    return (localArticles as Article[]).filter((a) => a.status === "published");
-}
-
-/**
- * AIPress DB Layer — Supabase Edition
+ * AIPress DB Layer — Git Edition (free, never pauses)
  *
- * Public reads go through the anon client (RLS-filtered).
- * Writes go through the service_role client (full access).
+ * Each article is one compact JSON file in content/articles/<id>.json.
+ * - Public reads: local filesystem (bundled with every deploy → instant, no network).
+ * - Admin reads: GitHub API when GITHUB_TOKEN is set (sees fresh drafts), else filesystem.
+ * - Writes: GitHub commits. Drafts use a "[draft]" commit message → Vercel skips the
+ *   build (see vercel.json ignoreCommand). Publishing triggers a normal deploy.
  */
 
-// ────────────────── helpers ──────────────────
+const DIR = "content/articles";
+const localDir = () => path.join(process.cwd(), DIR);
 
-/** Map a Supabase snake_case row to the app's camelCase Article type */
-function toArticle(row: Record<string, unknown>): Article {
-    return {
-        id: row.id as string,
-        titleEn: row.title_en as string,
-        titleRo: row.title_ro as string,
-        summaryEn: row.summary_en as string,
-        summaryRo: row.summary_ro as string,
-        contentEn: row.content_en as string,
-        contentRo: row.content_ro as string,
-        aiTakeEn: row.ai_take_en as string,
-        aiTakeRo: row.ai_take_ro as string,
-        imagePrompt: row.image_prompt as string,
-        imageUrl: (row.image_url as string) || undefined,
-        category: row.category as string,
-        tag: row.tag as string,
-        readTime: row.read_time as string,
-        status: row.status as Article["status"],
-        publishDate: row.publish_date as string,
-        trendingRank: row.trending_rank != null ? (row.trending_rank as number) : undefined,
-    };
+const byDateDesc = (a: Article, b: Article) =>
+    (b.publishDate || "").localeCompare(a.publishDate || "");
+
+async function readLocal(): Promise<Article[]> {
+    try {
+        const files = (await fs.readdir(localDir())).filter((f) => f.endsWith(".json"));
+        const list = await Promise.all(
+            files.map(async (f) => JSON.parse(await fs.readFile(path.join(localDir(), f), "utf8")) as Article)
+        );
+        return list.sort(byDateDesc);
+    } catch (e) {
+        console.error("readLocal failed:", e);
+        return [];
+    }
 }
 
-/** Map a camelCase Article to Supabase snake_case columns */
-function toRow(article: Article): Record<string, unknown> {
-    return {
-        title_en: article.titleEn,
-        title_ro: article.titleRo,
-        summary_en: article.summaryEn,
-        summary_ro: article.summaryRo,
-        content_en: article.contentEn,
-        content_ro: article.contentRo,
-        ai_take_en: article.aiTakeEn,
-        ai_take_ro: article.aiTakeRo,
-        image_prompt: article.imagePrompt,
-        image_url: article.imageUrl ?? null,
-        category: article.category,
-        tag: article.tag,
-        read_time: article.readTime,
-        status: article.status,
-        publish_date: article.publishDate,
-        trending_rank: article.trendingRank ?? null,
-        updated_at: new Date().toISOString(),
-    };
+async function readRemote(): Promise<Article[]> {
+    const names = (await ghListDir(DIR)).filter((f) => f.endsWith(".json"));
+    const list = await Promise.all(
+        names.map(async (n) => {
+            const f = await ghGetFile(`${DIR}/${n}`);
+            return f ? (JSON.parse(f.content.toString("utf8")) as Article) : null;
+        })
+    );
+    return (list.filter(Boolean) as Article[]).sort(byDateDesc);
 }
+
+const safeId = (id: string) => id.replace(/[^a-zA-Z0-9_-]/g, "");
 
 // ────────────────── reads ──────────────────
 
-/**
- * Fetch all articles (admin view — uses service_role to bypass RLS)
- */
 export async function getArticles(): Promise<Article[]> {
-    try {
-        const { data, error } = await getAdminClient()
-            .from("articles")
-            .select("*")
-            .order("publish_date", { ascending: false });
-
-        if (error) {
-            console.error("getArticles error:", error.message);
-            return localArticles as Article[];
+    if (githubEnabled()) {
+        try {
+            return await readRemote();
+        } catch (e) {
+            console.error("getArticles remote failed, using local:", e);
         }
-
-        return (data ?? []).map(toArticle);
-    } catch (e) {
-        console.error("getArticles unreachable, using local fallback:", e);
-        return localArticles as Article[];
     }
+    return readLocal();
 }
 
-/**
- * Fetch only published articles (public-facing — uses anon key + RLS)
- */
 export async function getPublishedArticles(): Promise<Article[]> {
-    try {
-        const { data, error } = await getPublicClient()
-            .from("articles")
-            .select("*")
-            .order("publish_date", { ascending: false });
-
-        if (error) {
-            console.error("getPublishedArticles error:", error.message);
-            return getLocalArticles();
-        }
-
-        return (data ?? []).map(toArticle);
-    } catch (e) {
-        console.error("getPublishedArticles unreachable, using local fallback:", e);
-        return getLocalArticles();
-    }
+    return (await readLocal()).filter((a) => a.status === "published");
 }
 
-/**
- * Fetch a single article by ID (admin — bypasses RLS so drafts are visible)
- */
 export async function getArticleById(id: string): Promise<Article | undefined> {
-    try {
-        const { data, error } = await getAdminClient()
-            .from("articles")
-            .select("*")
-            .eq("id", id)
-            .single();
-
-        if (error || !data) return undefined;
-        return toArticle(data);
-    } catch (e) {
-        console.error("getArticleById unreachable, using local fallback:", e);
-        return (localArticles as Article[]).find((a) => a.id === id);
-    }
+    return (await getArticles()).find((a) => a.id === id);
 }
 
-/**
- * Fetch a single published article by ID (public-facing — uses anon key + RLS)
- */
 export async function getPublishedArticleById(id: string): Promise<Article | undefined> {
-    try {
-        const { data, error } = await getPublicClient()
-            .from("articles")
-            .select("*")
-            .eq("id", id)
-            .single();
-
-        if (error || !data) return undefined;
-        return toArticle(data);
-    } catch (e) {
-        console.error("getPublishedArticleById unreachable, using local fallback:", e);
-        return getLocalArticles().find((a) => a.id === id);
-    }
+    return (await getPublishedArticles()).find((a) => a.id === id);
 }
 
 // ────────────────── writes ──────────────────
 
-/**
- * Upsert (insert or update) an article.
- * If article.id exists in the DB → update, otherwise → insert.
- */
 export async function updateArticle(article: Article): Promise<void> {
-    const row = toRow(article);
-
-    // Use upsert — inserts if ID doesn't exist, updates if it does
-    const { error } = await getAdminClient()
-        .from("articles")
-        .upsert({ ...row, id: article.id }, { onConflict: "id" });
-
-    if (error) {
-        console.error("updateArticle upsert error:", error.message);
-    }
+    const { createdAt: _c, updatedAt: _u, ...clean } = article;
+    void _c; void _u;
+    const json = JSON.stringify(clean);
+    const tag = article.status === "published" ? "publish" : "[draft]";
+    await ghPutFile(`${DIR}/${safeId(article.id)}.json`, json, `${tag} ${article.titleEn.slice(0, 60)}`);
 }
 
-/**
- * Delete an article by ID
- */
 export async function deleteArticle(id: string): Promise<void> {
-    const { error } = await getAdminClient()
-        .from("articles")
-        .delete()
-        .eq("id", id);
-
-    if (error) {
-        console.error("deleteArticle error:", error.message);
-    }
-}
-
-/**
- * @deprecated DANGEROUS: Deletes ALL articles then re-inserts.
- * Use updateArticle() for upserts and deleteArticle() for removal instead.
- * This function is kept only for emergency recovery and will throw if called without override.
- */
-export async function saveArticles(articles: Article[], confirmOverwrite = false): Promise<void> {
-    if (!confirmOverwrite) {
-        throw new Error(
-            "saveArticles() is deprecated and dangerous — it deletes ALL articles. " +
-            "Use updateArticle() / deleteArticle() instead. " +
-            "Pass confirmOverwrite=true only for emergency recovery."
-        );
-    }
-
-    const admin = getAdminClient();
-
-    const { error: clearError } = await admin.from("articles").delete().neq("id", "");
-    if (clearError) {
-        console.error("saveArticles clear error:", clearError.message);
-        return;
-    }
-
-    if (articles.length === 0) return;
-
-    const rows = articles.map((a) => ({ ...toRow(a), id: a.id || undefined }));
-    const { error: insertError } = await admin.from("articles").insert(rows);
-    if (insertError) {
-        console.error("saveArticles insert error:", insertError.message);
+    const sid = safeId(id);
+    await ghDeleteFile(`${DIR}/${sid}.json`, `remove article ${sid}`);
+    for (const ext of ["webp", "png"]) {
+        await ghDeleteFile(`public/images/articles/${sid}.${ext}`, `[draft] remove image ${sid}`).catch(() => {});
     }
 }
